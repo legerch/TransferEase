@@ -43,10 +43,14 @@ set(PROJECT_HEADERS
     logs/ilogger.h
     logs/logcontext.h
     logs/logmanager.h
+
+    tools/stringhelper.h
 )
 
 set(PROJECT_SOURCES
     logs/logmanager.cpp
+
+    tools/stringhelper.cpp
 )
 
 set(PROJECT_RSC
