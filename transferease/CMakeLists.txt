@@ -44,11 +44,15 @@ set(PROJECT_HEADERS
     logs/logcontext.h
     logs/logmanager.h
 
+    net/url.h
+
     tools/stringhelper.h
 )
 
 set(PROJECT_SOURCES
     logs/logmanager.cpp
+
+    net/url.cpp
 
     tools/stringhelper.cpp
 )
