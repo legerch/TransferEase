@@ -14,5 +14,10 @@ if(NOT PROJECT_BUILD_OUTPUT)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BUILD_OUTPUT}/bin)
 endif()
 
-# Run subdirectory routine
+# Build library
 add_subdirectory(transferease)
+
+# Do we need to build tests ?
+if(NOT PROJECT_TEASE_DISABLE_TESTS)
+    add_subdirectory(tests)
+endif()
