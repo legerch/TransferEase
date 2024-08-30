@@ -30,11 +30,11 @@ namespace tease
 /*      Private Class        */
 /*****************************/
 
-class Url::UrlImpl final
+class Url::Impl final
 {
 
 public:
-    explicit UrlImpl(Url *parent);
+    explicit Impl(Url *parent);
 
 public:
     bool parseUrl(const std::string &url);
@@ -62,7 +62,7 @@ public:
 /*      Private Class        */
 /*****************************/
 
-Url::UrlImpl::UrlImpl(Url *parent)
+Url::Impl::Impl(Url *parent)
 {
     m_parent = parent;
 }
@@ -84,7 +84,7 @@ Url::UrlImpl::UrlImpl(Url *parent)
  * \return
  * Returns \c true if succeed to parse.
  */
-bool Url::UrlImpl::parseUrl(const std::string &url)
+bool Url::Impl::parseUrl(const std::string &url)
 {
     /* Define URI regex parser */
     const std::regex uriRegex(R"(^(\w+):\/\/([^\/:]+)(?::(\d+))?(\/.*)?$)");
@@ -138,7 +138,7 @@ bool Url::UrlImpl::parseUrl(const std::string &url)
  * \sa isValid()
  */
 Url::Url() :
-    d_ptr(std::make_unique<UrlImpl>(this))
+    d_ptr(std::make_unique<Impl>(this))
 {
     clear();
 }
@@ -156,7 +156,7 @@ Url::Url() :
  * \sa clear()
  */
 Url::Url(const std::string &url) :
-    d_ptr(std::make_unique<UrlImpl>(this))
+    d_ptr(std::make_unique<Impl>(this))
 {
     setUrl(url);
 }
@@ -294,19 +294,19 @@ std::string Url::idSchemeToString(IdScheme idScheme)
     }
 
     /* Return associated string */
-    return UrlImpl::MAP_ID_SCHEME_TO_STRING.at(idScheme);
+    return Url::Impl::MAP_ID_SCHEME_TO_STRING.at(idScheme);
 }
 
 Url::IdScheme Url::idSchemeFromString(const std::string &idScheme)
 {
     /* Search scheme by string value */
     const std::string scheme = StringHelper::toLower(idScheme);
-    auto it = std::find_if(UrlImpl::MAP_ID_SCHEME_TO_STRING.cbegin(), UrlImpl::MAP_ID_SCHEME_TO_STRING.cend(), [scheme](const auto &pair){
+    auto it = std::find_if(Url::Impl::MAP_ID_SCHEME_TO_STRING.cbegin(), Url::Impl::MAP_ID_SCHEME_TO_STRING.cend(), [scheme](const auto &pair){
         return pair.second == scheme;
     });
 
     /* Do we have found a scheme */
-    if(it == UrlImpl::MAP_ID_SCHEME_TO_STRING.cend()){
+    if(it == Url::Impl::MAP_ID_SCHEME_TO_STRING.cend()){
         const std::string err = StringHelper::format("No supported scheme ID match string '%s'", idScheme);
         TEASE_LOG_WARN(err);
         return SCHEME_UNK;
@@ -319,7 +319,7 @@ Url::IdScheme Url::idSchemeFromString(const std::string &idScheme)
 /*****************************/
 /* Constants definitions     */
 /*****************************/
-const std::unordered_map<Url::IdScheme, std::string> Url::UrlImpl::MAP_ID_SCHEME_TO_STRING =
+const std::unordered_map<Url::IdScheme, std::string> Url::Impl::MAP_ID_SCHEME_TO_STRING =
 {
     {SCHEME_FTP, "ftp"},
     {SCHEME_FTPS, "ftps"},

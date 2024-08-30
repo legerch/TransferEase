@@ -61,8 +61,8 @@ public:
     static IdScheme idSchemeFromString(const std::string &idScheme);
 
 private:
-    class UrlImpl;
-    std::unique_ptr<UrlImpl> d_ptr;
+    class Impl;
+    std::unique_ptr<Impl> d_ptr;
 };
 
 } // namespace tease
