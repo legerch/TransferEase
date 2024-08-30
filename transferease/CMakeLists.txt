@@ -44,6 +44,7 @@ set(PROJECT_HEADERS
     logs/logcontext.h
     logs/logmanager.h
 
+    net/bytesarray.h
     net/url.h
 
     tools/stringhelper.h
@@ -52,6 +53,7 @@ set(PROJECT_HEADERS
 set(PROJECT_SOURCES
     logs/logmanager.cpp
 
+    net/bytesarray.cpp
     net/url.cpp
 
     tools/stringhelper.cpp
