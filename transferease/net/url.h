@@ -35,6 +35,8 @@ public:
     Url();
     explicit Url(const std::string &url);
 
+    ~Url();
+
 public:
     void clear();
     void setUrl(const std::string &url);

@@ -34,6 +34,9 @@ class Url::UrlImpl final
 {
 
 public:
+    explicit UrlImpl(Url *parent);
+
+public:
     bool parseUrl(const std::string &url);
 
 public:
@@ -41,6 +44,8 @@ public:
     std::string m_host;
     uint16_t m_port;
     std::string m_path;
+
+    Url *m_parent;
 
 public:
     /*!
@@ -57,16 +62,21 @@ public:
 /*      Private Class        */
 /*****************************/
 
+Url::UrlImpl::UrlImpl(Url *parent)
+{
+    m_parent = parent;
+}
+
 /*!
  * \brief Use to parse URL
  * \details
  * Regex used was defined this way:
  * - <tt>(\w+)</tt>: Matches the scheme (e.g., http, https)
- * - <tt>://</tt>: Matches the literal string "://"
- * - <tt>([^/:]+)</tt>: Matches the host (e.g., example.com), which consists of characters other than \c / and <tt>:</tt>.
+ * - <tt>:\/\/</tt>: Matches the literal string "://"
+ * - <tt>([^\/:]+))</tt>: Matches the host (e.g., example.com), which consists of characters other than \c / and <tt>:</tt>.
  * - <tt>(?::(\d+))?</tt>: Optionally matches the port, capturing a sequence of digits following a <tt>:</tt>. \n
  * The \c ? makes the port optional.
- * - <tt>(/.*)?</tt>: Optionally matches the path, capturing everything following a \c /
+ * - <tt>(\/.*)?</tt>: Optionally matches the path, capturing everything following a \c /
  *
  * \param[in] url
  * URL to parse.
@@ -77,7 +87,7 @@ public:
 bool Url::UrlImpl::parseUrl(const std::string &url)
 {
     /* Define URI regex parser */
-    static const std::regex uriRegex(R"(^(\w+)://([^/:]+)(?::(\d+))?(/.*)?$)", std::regex::extended);
+    const std::regex uriRegex(R"(^(\w+):\/\/([^\/:]+)(?::(\d+))?(\/.*)?$)");
     static constexpr int expMatches = 5; // 1 for full match, 4 for submatches
 
     /* Verify regex matches */
@@ -114,7 +124,7 @@ bool Url::UrlImpl::parseUrl(const std::string &url)
         m_port = 0;
     }
 
-    return true;
+    return m_parent->isValid();
 }
 
 /*****************************/
@@ -128,7 +138,7 @@ bool Url::UrlImpl::parseUrl(const std::string &url)
  * \sa isValid()
  */
 Url::Url() :
-    d_ptr(std::make_unique<UrlImpl>())
+    d_ptr(std::make_unique<UrlImpl>(this))
 {
     clear();
 }
@@ -146,10 +156,12 @@ Url::Url() :
  * \sa clear()
  */
 Url::Url(const std::string &url) :
-    d_ptr(std::make_unique<UrlImpl>())
+    d_ptr(std::make_unique<UrlImpl>(this))
 {
     setUrl(url);
 }
+
+Url::~Url() = default;
 
 /*!
  * \brief Use to reset an URL
@@ -224,8 +236,22 @@ bool Url::isValid() const
     return true;
 }
 
+/*!
+ * \brief Use to generate properly formatted URL
+ *
+ * \return
+ * Returns formatted URL. \n
+ * Returned value can be empty if URL is invalid.
+ *
+ * \sa isValid()
+ */
 std::string Url::getUrl() const
 {
+    /* Verify that URL is valid */
+    if(!isValid()){
+        return std::string();
+    }
+
     /* Create URL */
     std::string url = idSchemeToString(d_ptr->m_idScheme) + "://" + d_ptr->m_host;
 

@@ -3,6 +3,10 @@
 
 #include <string>
 
+#include "transferease/net/url.h"
+
+using Url = tease::Url;
+
 class TestsHelper
 {
 
