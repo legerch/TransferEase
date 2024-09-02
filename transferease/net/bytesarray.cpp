@@ -235,7 +235,8 @@ void BytesArray::setFromString(std::string_view strView)
  *
  * \warning
  * Be careful with loaded file, current implementation
- * will allocate same size memory than the loaded file.
+ * will allocate same size memory than the loaded file. \n
+ * Just to prevent any issues, 1Gb limit is currently in place.
  *
  * \return
  * Returns \c true if succeed.
@@ -245,6 +246,8 @@ void BytesArray::setFromString(std::string_view strView)
  */
 bool BytesArray::setFromFile(const std::string &pathFile)
 {
+    static constexpr size_t sizeLimit = 1024 * 1024 * 1024; // Represent 1Gb
+
     /* Clear any previous data */
     clear();
 
@@ -262,6 +265,11 @@ bool BytesArray::setFromFile(const std::string &pathFile)
     inFile.seekg(0, std::ios::beg);
 
     /* Resize the internal buffer to hold file datas */
+    if(size > sizeLimit){
+        const std::string err = StringHelper::format("Read file is superior to current limit, no loading performed [path: %s, size-file: %zu, size-max: %zu]", pathFile.c_str(), size, sizeLimit);
+        TEASE_LOG_ERROR(err);
+        return false;
+    }
     d_ptr->m_buffer.resize(size);
 
     /* Read file datas into the buffer */

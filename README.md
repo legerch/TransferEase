@@ -46,7 +46,7 @@ _TODO: Describe how to use library_
 # 4. Library details
 
 _TODO: Sections that can be described are: implementation/tips and tricks/alternatives_
-_TODO: Talk about large files (currently not recommended + add implementation with stream chunk management)_
+_TODO: Talk about large files (about current safeguard of 1Gb + add implementation with stream chunk management)_
 
 # 5. Documentation
 
