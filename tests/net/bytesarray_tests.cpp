@@ -2,6 +2,10 @@
 
 #include "testshelper.h"
 
+/*****************************/
+/* Tests - Simple methods    */
+/*****************************/
+
 TEST(BytesArrayTest, construction)
 {
     BytesArray empty;
@@ -79,3 +83,42 @@ TEST(BytesArrayTest, iteration)
 
     EXPECT_EQ(index, expected.size());
 }
+
+/*****************************/
+/* Tests - Load from string  */
+/*****************************/
+
+struct DataBaStr
+{
+    std::string inData;
+    std::vector<uint8_t> expData;
+};
+
+class TestBaFillFromStr : public ::testing::TestWithParam<DataBaStr>{};
+
+TEST_P(TestBaFillFromStr, validateBaStr)
+{
+    const auto &params = GetParam();
+
+    /* Fill bytes array */
+    BytesArray ba;
+    ba.setFromString(params.inData);
+
+    /* Verify size of expected datas */
+    ASSERT_EQ(ba.getSize(), params.expData.size());
+
+    /* Verify each bytes */
+    for(size_t i = 0; i < ba.getSize(); ++i){
+        EXPECT_EQ(ba[i], params.expData[i]);
+    }
+
+    /* Verify conversion back */
+    EXPECT_EQ(ba.toString(), params.inData);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    validateBaStr, TestBaFillFromStr, ::testing::Values(
+        DataBaStr{.inData = u8"Hello world", .expData = {0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64}},
+        DataBaStr{.inData = u8"こんにちは", .expData = {0xE3, 0x81, 0x93, 0xE3, 0x82, 0x93, 0xE3, 0x81, 0xAB, 0xE3, 0x81, 0xA1, 0xE3, 0x81, 0xAF}}
+    )
+);

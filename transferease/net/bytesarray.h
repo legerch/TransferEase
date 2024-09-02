@@ -2,6 +2,8 @@
 #define TEASE_NET_BYTESARRAY_H
 
 #include <memory>
+#include <string>
+#include <string_view>
 #include <vector>
 
 namespace tease
@@ -40,11 +42,17 @@ public:
 
     const Byte& at(size_t index) const;
 
+    std::string toString() const;
+
 public:
-    void resize(size_t size);
+    void reserve(size_t size);
+    void resize(size_t size, Byte value = 0);
 
     void pushBack(Byte value);
+    void pushBack(std::string_view strView);
     void popBack();
+
+    void setFromString(std::string_view strView);
 
     Byte* data();
     const Byte* dataConst() const;

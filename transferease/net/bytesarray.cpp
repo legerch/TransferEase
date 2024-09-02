@@ -36,7 +36,7 @@ public:
     explicit Impl(const Impl &other);
 
 public:
-    std::vector<uint8_t> m_buffer;
+    Container m_buffer;
 };
 
 /*****************************/
@@ -101,19 +101,81 @@ const BytesArray::Byte &BytesArray::at(size_t index) const
     return d_ptr->m_buffer.at(index);
 }
 
-void BytesArray::resize(size_t size)
+std::string BytesArray::toString() const
 {
-    d_ptr->m_buffer.resize(size);
+    return std::string(d_ptr->m_buffer.cbegin(), d_ptr->m_buffer.cend());
 }
 
+/*!
+ * \brief Increase capacity of bytes array.
+ *
+ * \param[in] size
+ * Total number of elements that the bytes array
+ * can hold without requiring reallocation. \n
+ * If \c size is greater than \c getMaxSize(), new storage
+ * is allocated, otherwise the function does nothing (so
+ * no shrinking).
+ *
+ * \sa resize()
+ * \sa getMaxSize()
+ */
+void BytesArray::reserve(size_t size)
+{
+    d_ptr->m_buffer.reserve(size);
+}
+
+void BytesArray::resize(size_t size, Byte value)
+{
+    d_ptr->m_buffer.resize(size, value);
+}
+
+/*!
+ * \brief Append a value to the back of bytes array
+ *
+ * \param[in] value
+ * Value to add
+ */
 void BytesArray::pushBack(Byte value)
 {
     d_ptr->m_buffer.push_back(value);
 }
 
+/*!
+ * \overload
+ * \param[in] strView
+ * Append string to bytes array.
+ *
+ * \sa setFromString()
+ */
+void BytesArray::pushBack(std::string_view strView)
+{
+    /* Limit allocations by pre-allocating it */
+    reserve(d_ptr->m_buffer.size() + strView.size());
+
+    /* Copy string characters to buffer */
+    d_ptr->m_buffer.insert(d_ptr->m_buffer.end(), strView.cbegin(), strView.cend());
+}
+
 void BytesArray::popBack()
 {
     d_ptr->m_buffer.pop_back();
+}
+
+/*!
+ * \brief Allow to set bytes array from a string
+ * \details
+ * This method will simply clear() any previous data
+ * and append string bytes via pushBack() method.
+ *
+ * \param[in] strView
+ * String to use to set bytes array
+ *
+ * \sa clear(), pushBack()
+ */
+void BytesArray::setFromString(std::string_view strView)
+{
+    clear();
+    pushBack(strView);
 }
 
 BytesArray::Byte *BytesArray::data()
