@@ -1,6 +1,7 @@
 #include "url.h"
 
 #include <regex>
+#include <unordered_map>
 
 #include "logs/logmanager.h"
 #include "tools/stringhelper.h"
