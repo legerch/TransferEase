@@ -3,9 +3,11 @@
 
 #include <string>
 
+#include "transferease/net/bytesarray.h"
 #include "transferease/net/url.h"
 
 using Url = tease::Url;
+using BytesArray = tease::BytesArray;
 
 class TestsHelper
 {

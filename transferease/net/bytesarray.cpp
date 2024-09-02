@@ -79,6 +79,8 @@ BytesArray::BytesArray(const BytesArray &other)
 BytesArray::BytesArray(BytesArray &&other) noexcept
     : d_ptr(std::move(other.d_ptr)){}
 
+BytesArray::~BytesArray() = default;
+
 bool BytesArray::isEmpty() const
 {
     return d_ptr->m_buffer.empty();
@@ -92,6 +94,41 @@ std::size_t BytesArray::getSize() const
 std::size_t BytesArray::getMaxSize() const
 {
     return d_ptr->m_buffer.max_size();
+}
+
+const BytesArray::Byte &BytesArray::at(size_t index) const
+{
+    return d_ptr->m_buffer.at(index);
+}
+
+void BytesArray::resize(size_t size)
+{
+    d_ptr->m_buffer.resize(size);
+}
+
+void BytesArray::pushBack(Byte value)
+{
+    d_ptr->m_buffer.push_back(value);
+}
+
+void BytesArray::popBack()
+{
+    d_ptr->m_buffer.pop_back();
+}
+
+BytesArray::Byte *BytesArray::data()
+{
+    return d_ptr->m_buffer.data();
+}
+
+const BytesArray::Byte *BytesArray::dataConst() const
+{
+    return d_ptr->m_buffer.data();
+}
+
+void BytesArray::clear()
+{
+    d_ptr->m_buffer.clear();
 }
 
 BytesArray::iterator BytesArray::begin()
@@ -132,6 +169,16 @@ BytesArray::reverse_iterator BytesArray::rend()
 BytesArray::const_reverse_iterator BytesArray::crend() const
 {
     return d_ptr->m_buffer.crend();
+}
+
+BytesArray::Byte& BytesArray::operator[](size_t index)
+{
+    return d_ptr->m_buffer[index];
+}
+
+const BytesArray::Byte& BytesArray::operator[](size_t index) const
+{
+    return d_ptr->m_buffer[index];
 }
 
 /*****************************/

@@ -31,6 +31,7 @@ set(PROJECT_HEADERS
 set(PROJECT_SOURCES
     testshelper.cpp
 
+    net/bytesarray_tests.cpp
     net/url_tests.cpp
 )
 

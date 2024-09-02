@@ -31,10 +31,26 @@ public:
     explicit BytesArray(const BytesArray &other);
     explicit BytesArray(BytesArray &&other) noexcept;
 
+    ~BytesArray();
+
 public:
     bool isEmpty() const;
     std::size_t getSize() const;
     std::size_t getMaxSize() const;
+
+    const Byte& at(size_t index) const;
+
+public:
+    void resize(size_t size);
+
+    void pushBack(Byte value);
+    void popBack();
+
+    Byte* data();
+    const Byte* dataConst() const;
+
+public:
+    void clear();
 
 public:
     iterator begin();
@@ -45,6 +61,10 @@ public:
     const_iterator cend() const;
     reverse_iterator rend();
     const_reverse_iterator crend() const;
+
+public:
+    Byte& operator[](size_t index);
+    const Byte& operator[](size_t index) const;
 
 private:
     class Impl;
