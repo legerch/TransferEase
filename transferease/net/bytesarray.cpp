@@ -1,5 +1,11 @@
 #include "bytesarray.h"
 
+#include "logs/logmanager.h"
+#include "tools/filesystemhelper.h"
+#include "tools/stringhelper.h"
+
+#include <fstream>
+
 /*****************************/
 /* Class documentations      */
 /*****************************/
@@ -107,6 +113,44 @@ std::string BytesArray::toString() const
 }
 
 /*!
+ * \brief Allow to export bytes array data to a file
+ *
+ * \param[in] pathFile
+ * Path to file to create. \n
+ * If file doesn't exists, method will automatically create
+ * it (and build needed folders). \n
+ * If file already exists, it will be truncated before
+ * writing to it.
+ *
+ * \return
+ * Returns \c true if succeed.
+ *
+ * \sa setFromFile()
+ * \sa toString()
+ */
+bool BytesArray::toFile(const std::string &pathFile)
+{
+    /* Prepare output file */
+    FileSystemHelper::createDirectories(FileSystemHelper::getFilePathDir(pathFile));
+    std::ofstream outFile(pathFile, std::ios::out | std::ios::trunc | std::ios::binary);
+    if(!outFile){
+        const std::string err = StringHelper::format("Failed to create file [path: %s]", pathFile.c_str());
+        TEASE_LOG_ERROR(err);
+        return false;
+    }
+
+    /* Write bytes to file */
+    outFile.write(reinterpret_cast<const char*>(d_ptr->m_buffer.data()), d_ptr->m_buffer.size());
+    if(!outFile){
+        const std::string err = StringHelper::format("Failed to write to file [path: %s]", pathFile.c_str());
+        TEASE_LOG_ERROR(err);
+        return false;
+    }
+
+    return true;
+}
+
+/*!
  * \brief Increase capacity of bytes array.
  *
  * \param[in] size
@@ -171,11 +215,64 @@ void BytesArray::popBack()
  * String to use to set bytes array
  *
  * \sa clear(), pushBack()
+ * \sa setFromFile()
  */
 void BytesArray::setFromString(std::string_view strView)
 {
     clear();
     pushBack(strView);
+}
+
+/*!
+ * \brief Allow to set bytes array from file content
+ * \details
+ * This method will clear any previous data and load
+ * file content data into the bytes array.
+ *
+ * \param[in] pathFile
+ * Path to file to load. \n
+ * If file doesn't exist, method will returns \c false
+ *
+ * \warning
+ * Be careful with loaded file, current implementation
+ * will allocate same size memory than the loaded file.
+ *
+ * \return
+ * Returns \c true if succeed.
+ *
+ * \sa toFile()
+ * \sa setFromString()
+ */
+bool BytesArray::setFromFile(const std::string &pathFile)
+{
+    /* Clear any previous data */
+    clear();
+
+    /* Open file */
+    std::ifstream inFile(pathFile, std::ios::in | std::ios::binary);
+    if(!inFile){
+        const std::string err = StringHelper::format("Failed to load file [path: %s]", pathFile.c_str());
+        TEASE_LOG_ERROR(err);
+        return false;
+    }
+
+    /* Determine file size */
+    inFile.seekg(0, std::ios::end);
+    const std::streamsize size = inFile.tellg();
+    inFile.seekg(0, std::ios::beg);
+
+    /* Resize the internal buffer to hold file datas */
+    d_ptr->m_buffer.resize(size);
+
+    /* Read file datas into the buffer */
+    inFile.read(reinterpret_cast<char*>(d_ptr->m_buffer.data()), size);
+    if(!inFile){
+        const std::string err = StringHelper::format("Failed to read data from file [path: %s, nb-bytes-read: %zd]", pathFile.c_str(), inFile.gcount());
+        TEASE_LOG_ERROR(err);
+        return false;
+    }
+
+    return true;
 }
 
 BytesArray::Byte *BytesArray::data()
@@ -241,6 +338,16 @@ BytesArray::Byte& BytesArray::operator[](size_t index)
 const BytesArray::Byte& BytesArray::operator[](size_t index) const
 {
     return d_ptr->m_buffer[index];
+}
+
+bool operator==(const BytesArray &left, const BytesArray &right)
+{
+    return left.d_ptr->m_buffer == right.d_ptr->m_buffer;
+}
+
+bool operator!=(const BytesArray &left, const BytesArray &right)
+{
+    return !(left == right);
 }
 
 /*****************************/

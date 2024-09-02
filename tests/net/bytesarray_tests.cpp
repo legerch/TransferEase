@@ -122,3 +122,25 @@ INSTANTIATE_TEST_SUITE_P(
         DataBaStr{.inData = u8"こんにちは", .expData = {0xE3, 0x81, 0x93, 0xE3, 0x82, 0x93, 0xE3, 0x81, 0xAB, 0xE3, 0x81, 0xA1, 0xE3, 0x81, 0xAF}}
     )
 );
+
+/*****************************/
+/* Tests - Load from file    */
+/*****************************/
+
+TEST(BytesArrayTest, importExport)
+{
+    const std::string pathSampleIn = TestsHelper::getPathExternalRsc("samples/input/jaguar.bmp");
+    const std::string pathSampleOut = TestsHelper::getPathExternalRsc("samples/output/jaguar.bmp");
+
+    BytesArray baOriginal, baReloaded;
+
+    /* Load and export input bytes array */
+    ASSERT_TRUE(baOriginal.setFromFile(pathSampleIn));
+    ASSERT_TRUE(baOriginal.toFile(pathSampleOut));
+
+    /* Reload exported bytes array */
+    ASSERT_TRUE(baReloaded.setFromFile(pathSampleOut));
+
+    /* Verify that bytes array are equals */
+    ASSERT_EQ(baOriginal, baReloaded);
+}

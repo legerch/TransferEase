@@ -43,6 +43,7 @@ public:
     const Byte& at(size_t index) const;
 
     std::string toString() const;
+    bool toFile(const std::string &pathFile);
 
 public:
     void reserve(size_t size);
@@ -53,6 +54,7 @@ public:
     void popBack();
 
     void setFromString(std::string_view strView);
+    bool setFromFile(const std::string &pathFile);
 
     Byte* data();
     const Byte* dataConst() const;
@@ -73,6 +75,10 @@ public:
 public:
     Byte& operator[](size_t index);
     const Byte& operator[](size_t index) const;
+
+public:
+    friend bool operator==(const BytesArray &left, const BytesArray &right);
+    friend bool operator!=(const BytesArray &left, const BytesArray &right);
 
 private:
     class Impl;
