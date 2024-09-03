@@ -45,6 +45,7 @@ set(PROJECT_HEADERS
     logs/logmanager.h
 
     net/bytesarray.h
+    net/handle.h
     net/url.h
 
     tools/filesystemhelper.h
@@ -55,6 +56,7 @@ set(PROJECT_SOURCES
     logs/logmanager.cpp
 
     net/bytesarray.cpp
+    net/handle.cpp
     net/url.cpp
 
     tools/filesystemhelper.cpp
