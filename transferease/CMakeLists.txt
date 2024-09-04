@@ -46,6 +46,7 @@ set(PROJECT_HEADERS
 
     net/bytesarray.h
     net/handle.h
+    net/request.h
     net/url.h
 
     tools/filesystemhelper.h
@@ -57,6 +58,7 @@ set(PROJECT_SOURCES
 
     net/bytesarray.cpp
     net/handle.cpp
+    net/request.cpp
     net/url.cpp
 
     tools/filesystemhelper.cpp
