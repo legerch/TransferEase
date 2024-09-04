@@ -76,6 +76,9 @@ public:
     Byte& operator[](size_t index);
     const Byte& operator[](size_t index) const;
 
+    BytesArray& operator=(const BytesArray &other);
+    BytesArray& operator=(BytesArray &&other) noexcept;
+
 public:
     friend bool operator==(const BytesArray &left, const BytesArray &right);
     friend bool operator!=(const BytesArray &left, const BytesArray &right);

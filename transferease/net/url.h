@@ -35,6 +35,9 @@ public:
     Url();
     explicit Url(const std::string &url);
 
+    explicit Url(const Url &other);
+    explicit Url(Url &&other) noexcept;
+
     ~Url();
 
 public:
@@ -59,6 +62,14 @@ public:
 public:
     static std::string idSchemeToString(IdScheme idScheme);
     static IdScheme idSchemeFromString(const std::string &idScheme);
+
+public:
+    Url& operator=(const Url &other);
+    Url& operator=(Url &&other) noexcept;
+
+public:
+    friend bool operator==(const Url &left, const Url &right);
+    friend bool operator!=(const Url &left, const Url &right);
 
 private:
     class Impl;

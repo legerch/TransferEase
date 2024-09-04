@@ -162,6 +162,12 @@ Url::Url(const std::string &url) :
     setUrl(url);
 }
 
+Url::Url(const Url &other) :
+    d_ptr(std::make_unique<Impl>(*other.d_ptr)){}
+
+Url::Url(Url &&other) noexcept :
+    d_ptr(std::move(other.d_ptr)){};
+
 Url::~Url() = default;
 
 /*!
@@ -315,6 +321,37 @@ Url::IdScheme Url::idSchemeFromString(const std::string &idScheme)
 
     /* Return matching scheme ID */
     return it->first;
+}
+
+Url& Url::operator=(const Url &other)
+{
+    /* Verify that value actually differs */
+    if(this == &other){
+        return *this;
+    }
+
+    /* Perform copy assignment */
+    d_ptr = std::make_unique<Impl>(*other.d_ptr);
+    return *this;
+}
+
+Url& Url::operator=(Url &&other) noexcept
+{
+    d_ptr = std::move(other.d_ptr);
+    return *this;
+}
+
+bool operator==(const Url &left, const Url &right)
+{
+    return left.d_ptr->m_idScheme == right.d_ptr->m_idScheme
+        && left.d_ptr->m_host == right.d_ptr->m_host
+        && left.d_ptr->m_port == right.d_ptr->m_port
+        && left.d_ptr->m_path == right.d_ptr->m_path;
+}
+
+bool operator!=(const Url &left, const Url &right)
+{
+    return !(left == right);
 }
 
 /*****************************/

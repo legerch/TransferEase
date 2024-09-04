@@ -80,7 +80,7 @@ BytesArray::BytesArray(const std::initializer_list<Byte> &args)
     : d_ptr(std::make_unique<Impl>(args)){}
 
 BytesArray::BytesArray(const BytesArray &other)
-    : d_ptr(other.d_ptr ? std::make_unique<Impl>(*other.d_ptr) : nullptr){}
+    : d_ptr(std::make_unique<Impl>(*other.d_ptr)){}
 
 BytesArray::BytesArray(BytesArray &&other) noexcept
     : d_ptr(std::move(other.d_ptr)){}
@@ -346,6 +346,24 @@ BytesArray::Byte& BytesArray::operator[](size_t index)
 const BytesArray::Byte& BytesArray::operator[](size_t index) const
 {
     return d_ptr->m_buffer[index];
+}
+
+BytesArray& BytesArray::operator=(const BytesArray &other)
+{
+    /* Verify that value actually differs */
+    if(this == &other){
+        return *this;
+    }
+
+    /* Perform copy assignment */
+    d_ptr = std::make_unique<Impl>(*other.d_ptr);
+    return *this;
+}
+
+BytesArray& BytesArray::operator=(BytesArray &&other) noexcept
+{
+    d_ptr = std::move(other.d_ptr);
+    return *this;
 }
 
 bool operator==(const BytesArray &left, const BytesArray &right)
