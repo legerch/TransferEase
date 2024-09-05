@@ -1,6 +1,8 @@
 #include "transfermanager.h"
 
 #include <curl/curl.h>
+#include <future>
+#include <mutex>
 
 #include "logs/logmanager.h"
 #include "net/handle.h"
@@ -40,6 +42,10 @@ class TransferManager::Impl final
 {
 
 public:
+    using Thread = std::future<void>;
+    using Locker = std::lock_guard<std::mutex>;
+
+public:
     explicit Impl(TransferManager *parent);
     ~Impl();
 
@@ -61,6 +67,9 @@ public:
     CURLM* m_handleMulti = nullptr;
 
     int m_nbMaxTrials;
+
+    Thread m_threadTransfer;
+    std::mutex m_mutex;
 
     CbStarted m_cbStarted;
     CbProgress m_cbProgress;
@@ -191,23 +200,46 @@ TransferManager::TransferManager() :
 
 TransferManager::~TransferManager() = default;
 
+bool TransferManager::transferIsInProgress() const
+{
+    /* Do thread is set ? */
+    if(!d_ptr->m_threadTransfer.valid()){
+        return false;
+    }
+
+    /* Do thread is currently running ? */
+    return d_ptr->m_threadTransfer.wait_for(std::chrono::seconds(0)) != std::future_status::ready;
+}
+
+void TransferManager::setNbMaxTrials(int nbTrials)
+{
+    Impl::Locker locker(d_ptr->m_mutex);
+
+    nbTrials = std::max(0, nbTrials);
+    d_ptr->m_nbMaxTrials = nbTrials;
+}
+
 void TransferManager::setCbStarted(CbStarted fct)
 {
+    Impl::Locker locker(d_ptr->m_mutex);
     d_ptr->m_cbStarted = fct;
 }
 
 void TransferManager::setCbProgress(CbProgress fct)
 {
+    Impl::Locker locker(d_ptr->m_mutex);
     d_ptr->m_cbProgress = fct;
 }
 
 void TransferManager::setCbCompleted(CbCompleted fct)
 {
+    Impl::Locker locker(d_ptr->m_mutex);
     d_ptr->m_cbCompleted = fct;
 }
 
 void TransferManager::setCbFailed(CbFailed fct)
 {
+    Impl::Locker locker(d_ptr->m_mutex);
     d_ptr->m_cbFailed = fct;
 }
 

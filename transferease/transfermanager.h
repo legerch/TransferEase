@@ -37,6 +37,12 @@ public:
     ~TransferManager();
 
 public:
+    bool transferIsInProgress() const;
+
+public:
+    void setNbMaxTrials(int nbTrials);
+
+public:
     void setCbStarted(CbStarted fct);
     void setCbProgress(CbProgress fct);
     void setCbCompleted(CbCompleted fct);
