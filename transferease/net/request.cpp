@@ -1,5 +1,7 @@
 #include "request.h"
 
+#include <cstring>
+
 /*****************************/
 /* Class documentations      */
 /*****************************/
@@ -27,18 +29,67 @@ namespace tease
 
 class Request::Impl final
 {
+public:
+    void configureTransfer(TypeTransfer idType, const Url &url);
+
+public:
+    size_t ioReadFromBytesArray(char *buffer, size_t nbBytes);
+    void ioReset();
+
+    void clear();
 
 public:
     TypeTransfer m_idType;
 
     Url m_url;
+
     BytesArray m_data;
+    size_t m_dataNbRead;
 };
 
 /*****************************/
 /* Functions implementation  */
 /*      Private Class        */
 /*****************************/
+
+void Request::Impl::configureTransfer(TypeTransfer idType, const Url &url)
+{
+    /* Reset any IO interactions */
+    ioReset();
+
+    /* Set common properties */
+    m_idType = idType;
+    m_url = url;
+}
+
+size_t Request::Impl::ioReadFromBytesArray(char *buffer, size_t nbBytes)
+{
+    const size_t nbBytesRemaining = m_data.getSize() - m_dataNbRead;
+    const size_t nbBytesToRead = std::min(nbBytes, nbBytesRemaining);
+
+    std::memcpy(buffer, m_data.dataConst() + m_dataNbRead, nbBytesToRead);
+    m_dataNbRead += nbBytesToRead;
+
+    return nbBytesToRead;
+}
+
+void Request::Impl::ioReset()
+{
+    m_dataNbRead = 0;
+
+    m_ioTotal = 0;
+    m_ioCurrent = 0;
+}
+
+void Request::Impl::clear()
+{
+    m_idType = TRANSFER_UNK;
+
+    m_url.clear();
+    m_data.clear();
+
+    ioReset();
+}
 
 /*****************************/
 /* Functions implementation  */
@@ -55,33 +106,24 @@ Request::~Request() = default;
 
 void Request::clear()
 {
-    d_ptr->m_idType = TRANSFER_UNK;
-
-    d_ptr->m_url.clear();
-    d_ptr->m_data.clear();
+    d_ptr->clear();
 }
 
 void Request::configureDownload(const Url &targetUrl)
 {
-    d_ptr->m_idType = TRANSFER_DOWNLOAD;
-
-    d_ptr->m_url = targetUrl;
+    d_ptr->configureTransfer(TRANSFER_DOWNLOAD, targetUrl);
     d_ptr->m_data.clear();
 }
 
 void Request::configureUpload(const Url &dstUrl, const BytesArray &inputData)
 {
-    d_ptr->m_idType = TRANSFER_UPLOAD;
-
-    d_ptr->m_url = dstUrl;
+    d_ptr->configureTransfer(TRANSFER_UPLOAD, dstUrl);
     d_ptr->m_data = inputData;
 }
 
 void Request::configureUpload(const Url &dstUrl, BytesArray &&inputData)
 {
-    d_ptr->m_idType = TRANSFER_UPLOAD;
-
-    d_ptr->m_url = dstUrl;
+    d_ptr->configureTransfer(TRANSFER_UPLOAD, dstUrl);
     d_ptr->m_data = std::move(inputData);
 }
 
@@ -105,6 +147,10 @@ const BytesArray& Request::getData() const
     return d_ptr->m_data;
 }
 
+void Request::ioReset()
+{
+    d_ptr->ioReset();
+}
 
 /*****************************/
 /* Constants definitions     */

@@ -42,6 +42,10 @@ public:
     BytesArray& getData();
     const BytesArray& getData() const;
 
+public:
+    size_t ioRead(char *buffer, size_t nbBytes);
+    void ioReset();
+
 private:
     class Impl;
     std::unique_ptr<Impl> d_ptr;
