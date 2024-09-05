@@ -51,6 +51,8 @@ set(PROJECT_HEADERS
 
     tools/filesystemhelper.h
     tools/stringhelper.h
+
+    transfermanager.h
 )
 
 set(PROJECT_SOURCES
@@ -63,6 +65,8 @@ set(PROJECT_SOURCES
 
     tools/filesystemhelper.cpp
     tools/stringhelper.cpp
+
+    transfermanager.cpp
 )
 
 set(PROJECT_RSC
