@@ -200,6 +200,17 @@ void BytesArray::pushBack(std::string_view strView)
     d_ptr->m_buffer.insert(d_ptr->m_buffer.end(), strView.cbegin(), strView.cend());
 }
 
+void BytesArray::pushBack(const Byte *buffer, size_t len)
+{
+    /* Verify buffer validity */
+    if(!buffer || len == 0){
+        return;
+    }
+
+    /* Add buffer content to our buffer */
+    d_ptr->m_buffer.insert(d_ptr->m_buffer.end(), buffer, buffer + len);
+}
+
 void BytesArray::popBack()
 {
     d_ptr->m_buffer.pop_back();

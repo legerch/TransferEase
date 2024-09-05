@@ -51,6 +51,7 @@ public:
 
     void pushBack(Byte value);
     void pushBack(std::string_view strView);
+    void pushBack(const Byte *buffer, size_t len);
     void popBack();
 
     void setFromString(std::string_view strView);

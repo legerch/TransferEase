@@ -41,6 +41,29 @@ TEST(BytesArrayTest, insertPopValues)
     EXPECT_EQ(array[1], 0x02);
 }
 
+TEST(BytesArrayTest, insertBuffer)
+{
+    constexpr BytesArray::Byte bufferData[] = {0x01, 0x02, 0x03, 0x04};
+    constexpr size_t bufferSize = sizeof(bufferData);
+    constexpr int nbPushes = 2;
+
+    BytesArray array;
+    for(int i = 0; i < nbPushes; ++i){
+        array.pushBack(bufferData, bufferSize);
+    }
+
+    EXPECT_EQ(bufferSize * nbPushes, array.getSize());
+    int bufferIdx = 0;
+    for(int i = 0; i < array.getSize(); ++i){
+        EXPECT_EQ(bufferData[bufferIdx], array[i]);
+
+        ++bufferIdx;
+        if(bufferIdx >= bufferSize){
+            bufferIdx = 0;
+        }
+    }
+}
+
 TEST(BytesArrayTest, accessAndModify)
 {
     BytesArray array(5, 0x00);
