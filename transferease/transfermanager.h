@@ -1,6 +1,7 @@
 #ifndef TEASE_TRANSFERMANAGER_H
 #define TEASE_TRANSFERMANAGER_H
 
+#include "transferease_global.h"
 #include "net/request.h"
 
 #include <functional>
@@ -10,6 +11,7 @@ namespace tease
 
 class TransferManager final
 {
+    TEASE_DISABLE_COPY_MOVE(TransferManager)
 
 public:
     enum IdError

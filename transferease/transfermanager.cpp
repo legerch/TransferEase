@@ -47,6 +47,11 @@ public:
     void init();
 
 private:
+    static size_t curlCbWrite(char *ptr, size_t size, size_t nmemb, void *userdata);
+    static size_t curlCbRead(char *buffer, size_t size, size_t nitems, void *userdata);
+    static int curlCbProgress(void *clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow);
+
+private:
     static void defaultCbStarted(Request::TypeTransfer typeTransfer);
     static void defaultCbProgress(Request::TypeTransfer typeTransfer, size_t transferTotal, size_t transferNow);
     static void defaultCbCompleted(Request::TypeTransfer typeTransfer);
@@ -100,6 +105,53 @@ void TransferManager::Impl::init()
     m_parent->setCbProgress(defaultCbProgress);
     m_parent->setCbCompleted(defaultCbCompleted);
     m_parent->setCbFailed(defaultCbFailed);
+}
+
+size_t TransferManager::Impl::curlCbWrite(char *ptr, size_t size, size_t nmemb, void *userdata)
+{
+    /* Cast elements */
+    Request *req = static_cast<Request*>(userdata);
+    BytesArray::Byte *bufferData = reinterpret_cast<BytesArray::Byte*>(ptr);
+
+    /* Fill request data */
+    const size_t bufferSize = size * nmemb;
+    req->getData().pushBack(bufferData, bufferSize);
+
+    return bufferSize;
+}
+
+size_t TransferManager::Impl::curlCbRead(char *buffer, size_t size, size_t nitems, void *userdata)
+{
+    /* Cast elements */
+    Request *req = static_cast<Request*>(userdata);
+
+    /* Read request data */
+    const size_t bufferSize = size * nitems;
+    return req->ioRead(buffer, bufferSize);
+}
+
+int TransferManager::Impl::curlCbProgress(void *clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow)
+{
+    /* Cast elements */
+    Request *req = static_cast<Request*>(clientp);
+
+    /* Update transfer status */
+    switch(req->getTypeTransfer())
+    {
+        case Request::TRANSFER_DOWNLOAD:{
+            req->ioSetSizeTotal(dltotal);
+            req->ioSetSizeCurrent(dlnow);
+        }break;
+
+        case Request::TRANSFER_UPLOAD:{
+            req->ioSetSizeTotal(ultotal);
+            req->ioSetSizeCurrent(ulnow);
+        }break;
+
+        default: break;
+    }
+
+    return 0; // Return 0 to continue the transfer, non-zero to abort
 }
 
 void TransferManager::Impl::defaultCbStarted(Request::TypeTransfer typeTransfer)
