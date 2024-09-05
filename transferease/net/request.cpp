@@ -85,6 +85,27 @@ void Request::configureUpload(const Url &dstUrl, BytesArray &&inputData)
     d_ptr->m_data = std::move(inputData);
 }
 
+Request::TypeTransfer Request::getTypeTransfer() const
+{
+    return d_ptr->m_idType;
+}
+
+const Url& Request::getUrl() const
+{
+    return d_ptr->m_url;
+}
+
+BytesArray& Request::getData()
+{
+    return d_ptr->m_data;
+}
+
+const BytesArray& Request::getData() const
+{
+    return d_ptr->m_data;
+}
+
+
 /*****************************/
 /* Constants definitions     */
 /*****************************/

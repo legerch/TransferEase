@@ -35,6 +35,13 @@ public:
     void configureUpload(const Url &dstUrl, const BytesArray &inputData);
     void configureUpload(const Url &dstUrl, BytesArray &&inputData);
 
+public:
+    TypeTransfer getTypeTransfer() const;
+    const Url& getUrl() const;
+
+    BytesArray& getData();
+    const BytesArray& getData() const;
+
 private:
     class Impl;
     std::unique_ptr<Impl> d_ptr;
