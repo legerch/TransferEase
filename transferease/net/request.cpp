@@ -45,6 +45,9 @@ public:
 
     BytesArray m_data;
     size_t m_dataNbRead;
+
+    size_t m_ioTotal;
+    size_t m_ioCurrent;
 };
 
 /*****************************/
@@ -145,6 +148,21 @@ BytesArray& Request::getData()
 const BytesArray& Request::getData() const
 {
     return d_ptr->m_data;
+}
+
+size_t Request::ioRead(char *buffer, size_t nbBytes)
+{
+    return d_ptr->ioReadFromBytesArray(buffer, nbBytes);
+}
+
+void Request::ioSetSizeTotal(size_t size)
+{
+    d_ptr->m_ioTotal = size;
+}
+
+void Request::ioSetSizeCurrent(size_t size)
+{
+    d_ptr->m_ioCurrent = size;
 }
 
 void Request::ioReset()

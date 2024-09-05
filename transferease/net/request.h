@@ -46,6 +46,9 @@ public:
     size_t ioRead(char *buffer, size_t nbBytes);
     void ioReset();
 
+    void ioSetSizeTotal(size_t size);
+    void ioSetSizeCurrent(size_t size);
+
 private:
     class Impl;
     std::unique_ptr<Impl> d_ptr;
