@@ -40,6 +40,7 @@ public:
     bool transferIsInProgress() const;
 
 public:
+    void setUserInfos(const std::string &username, const std::string &passwd);
     void setNbMaxTrials(int nbTrials);
 
 public:

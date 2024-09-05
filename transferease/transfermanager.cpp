@@ -66,6 +66,8 @@ private:
 public:
     CURLM* m_handleMulti = nullptr;
 
+    std::string m_username;
+    std::string m_userpwd;
     int m_nbMaxTrials;
 
     Thread m_threadTransfer;
@@ -209,6 +211,14 @@ bool TransferManager::transferIsInProgress() const
 
     /* Do thread is currently running ? */
     return d_ptr->m_threadTransfer.wait_for(std::chrono::seconds(0)) != std::future_status::ready;
+}
+
+void TransferManager::setUserInfos(const std::string &username, const std::string &passwd)
+{
+    Impl::Locker locker(d_ptr->m_mutex);
+
+    d_ptr->m_username = username;
+    d_ptr->m_userpwd = passwd;
 }
 
 void TransferManager::setNbMaxTrials(int nbTrials)
