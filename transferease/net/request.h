@@ -44,10 +44,14 @@ public:
 
 public:
     size_t ioRead(char *buffer, size_t nbBytes);
-    void ioReset();
-
     void ioSetSizeTotal(size_t size);
     void ioSetSizeCurrent(size_t size);
+    void ioRegisterTry();
+    void ioReset();
+
+    size_t ioGetSizeTotal() const;
+    size_t ioGetSizeCurrent() const;
+    int ioGetNbTrials() const;
 
 private:
     class Impl;

@@ -48,6 +48,7 @@ public:
 
     size_t m_ioTotal;
     size_t m_ioCurrent;
+    int m_ioNbTrials;
 };
 
 /*****************************/
@@ -82,6 +83,7 @@ void Request::Impl::ioReset()
 
     m_ioTotal = 0;
     m_ioCurrent = 0;
+    m_ioNbTrials = 0;
 }
 
 void Request::Impl::clear()
@@ -165,9 +167,29 @@ void Request::ioSetSizeCurrent(size_t size)
     d_ptr->m_ioCurrent = size;
 }
 
+void Request::ioRegisterTry()
+{
+    ++d_ptr->m_ioNbTrials;
+}
+
 void Request::ioReset()
 {
     d_ptr->ioReset();
+}
+
+size_t Request::ioGetSizeTotal() const
+{
+    return d_ptr->m_ioTotal;
+}
+
+size_t Request::ioGetSizeCurrent() const
+{
+    return d_ptr->m_ioCurrent;
+}
+
+int Request::ioGetNbTrials() const
+{
+    return d_ptr->m_ioNbTrials;
 }
 
 /*****************************/
