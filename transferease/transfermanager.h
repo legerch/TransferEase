@@ -23,20 +23,27 @@ public:
         ERR_INVALID_REQUEST,
         ERR_INVALID_SSL,
         ERR_BUSY,
-        ERR_USER_ABORT
+        ERR_USER_ABORT,
+        ERR_MAX_TRIALS,
+        ERR_MEMORY_FULL_HOST,
+        ERR_MEMORY_FULL_REMOTE,
+        ERR_HOST_NOT_FOUND,
+        ERR_HOST_REFUSED,
+        ERR_CONTENT_NOT_FOUND
     };
 
 public:
     using CbStarted = std::function<void(Request::TypeTransfer typeTransfer)>;
     using CbProgress = std::function<void(Request::TypeTransfer typeTransfer, size_t transferTotal, size_t transferNow)>;
     using CbCompleted = std::function<void(Request::TypeTransfer typeTransfer)>;
-    using CbFailed = std::function<void(Request::TypeTransfer typeTransfer)>;
+    using CbFailed = std::function<void(Request::TypeTransfer typeTransfer, IdError idErr)>;
 
 public:
     TransferManager();
     ~TransferManager();
 
 public:
+    IdError startDownload(const Request::List &listReqs);
     bool transferIsInProgress() const;
 
 public:
