@@ -252,7 +252,7 @@ bool Url::isValid() const
  *
  * \sa isValid()
  */
-std::string Url::getUrl() const
+std::string Url::toString() const
 {
     /* Verify that URL is valid */
     if(!isValid()){

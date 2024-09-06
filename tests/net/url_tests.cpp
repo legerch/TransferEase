@@ -32,7 +32,7 @@ TEST_P(TestUrlParsing, validateUrls)
         EXPECT_EQ(url.getPort(), params.expPort);
         EXPECT_EQ(url.getPath(), params.expPath);
 
-        EXPECT_EQ(url.getUrl(), params.inputUrl);
+        EXPECT_EQ(url.toString(), params.inputUrl);
 
     }else{
         EXPECT_EQ(url.getIdScheme(), Url::SCHEME_UNK);
@@ -67,7 +67,7 @@ struct DataUrlCreate
     std::string inputPath;
 
     bool expIsValid;
-    std::string expUrl;
+    std::string expStr;
 };
 
 class TestUrlCreate : public ::testing::TestWithParam<DataUrlCreate>{};
@@ -84,18 +84,18 @@ TEST_P(TestUrlCreate, createUrls)
 
     EXPECT_EQ(url.isValid(), params.expIsValid);
     if(params.expIsValid){
-        EXPECT_EQ(url.getUrl(), params.expUrl);
+        EXPECT_EQ(url.toString(), params.expStr);
     }else{
-        EXPECT_EQ(url.getUrl(), "");
+        EXPECT_EQ(url.toString(), "");
     }
 }
 
 INSTANTIATE_TEST_SUITE_P(
     createUrls, TestUrlCreate, ::testing::Values(
-        DataUrlCreate{.inputIdScheme = Url::SCHEME_HTTPS, .inputHost = "example.com", .inputPort = 8081, .inputPath = "/path/to/resource.zip", .expIsValid = true, .expUrl = "https://example.com:8081/path/to/resource.zip"},
-        DataUrlCreate{.inputIdScheme = Url::SCHEME_FTP, .inputHost = "example.com", .inputPort = 0, .inputPath = "/path/to/resource.zip", .expIsValid = true, .expUrl = "ftp://example.com/path/to/resource.zip"},
+        DataUrlCreate{.inputIdScheme = Url::SCHEME_HTTPS, .inputHost = "example.com", .inputPort = 8081, .inputPath = "/path/to/resource.zip", .expIsValid = true, .expStr = "https://example.com:8081/path/to/resource.zip"},
+        DataUrlCreate{.inputIdScheme = Url::SCHEME_FTP, .inputHost = "example.com", .inputPort = 0, .inputPath = "/path/to/resource.zip", .expIsValid = true, .expStr = "ftp://example.com/path/to/resource.zip"},
 
-        DataUrlCreate{.inputIdScheme = Url::SCHEME_HTTPS, .inputHost = "", .inputPort = 0, .inputPath = "", .expIsValid = false, .expUrl = ""},
-        DataUrlCreate{.inputIdScheme = Url::SCHEME_UNK, .inputHost = "example.com", .inputPort = 8081, .inputPath = "/path/to/resource.zip", .expIsValid = false, .expUrl = ""}
+        DataUrlCreate{.inputIdScheme = Url::SCHEME_HTTPS, .inputHost = "", .inputPort = 0, .inputPath = "", .expIsValid = false, .expStr = ""},
+        DataUrlCreate{.inputIdScheme = Url::SCHEME_UNK, .inputHost = "example.com", .inputPort = 8081, .inputPath = "/path/to/resource.zip", .expIsValid = false, .expStr = ""}
     )
 );

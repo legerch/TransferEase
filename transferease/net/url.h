@@ -52,7 +52,7 @@ public:
 public:
     bool isValid() const;
 
-    std::string getUrl() const;
+    std::string toString() const;
 
     IdScheme getIdScheme() const;
     const std::string& getHost() const;
