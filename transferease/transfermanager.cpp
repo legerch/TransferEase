@@ -13,7 +13,7 @@
 /*****************************/
 
 /*!
- * \class tease::Url
+ * \class tease::TransferManager
  * \brief Use to manage URLs
  * \details
  * Some developer useful docs:

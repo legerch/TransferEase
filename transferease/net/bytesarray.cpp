@@ -12,7 +12,7 @@
 
 /*!
  * \class tease::BytesArray
- * \brief To complete
+ * \brief Allow to store an array of bytes.
  */
 
 /*****************************/

@@ -14,22 +14,25 @@ class TransferManager final
     TEASE_DISABLE_COPY_MOVE(TransferManager)
 
 public:
+    /*!
+     * \brief List of errors identifiers
+     */
     enum IdError
     {
-        ERR_NO_ERROR = 0,
+        ERR_NO_ERROR = 0,       /**< Sucess return code, no error detected */
 
-        ERR_INTERNAL,
-        ERR_INVALID_LOGIN,
-        ERR_INVALID_REQUEST,
-        ERR_INVALID_SSL,
-        ERR_BUSY,
-        ERR_USER_ABORT,
-        ERR_MAX_TRIALS,
-        ERR_MEMORY_FULL_HOST,
-        ERR_MEMORY_FULL_REMOTE,
-        ERR_HOST_NOT_FOUND,
-        ERR_HOST_REFUSED,
-        ERR_CONTENT_NOT_FOUND
+        ERR_INTERNAL,           /**< Internal error mainly due to underlying library, please refer to logs if this error is triggered */
+        ERR_INVALID_LOGIN,      /**< Login informations used where wrong */
+        ERR_INVALID_REQUEST,    /**< Receive an invalid request : can be an unsupported protocol and a misformatted request */
+        ERR_INVALID_SSL,        /**< Provided SSL informations are invalid */
+        ERR_BUSY,               /**< Manager is already performing requests transfers */
+        ERR_USER_ABORT,         /**< User abort current transfer */
+        ERR_MAX_TRIALS,         /**< Maximum number of trials were reached */
+        ERR_MEMORY_FULL_HOST,   /**< Trying to download a ressource to host which have his memory full */
+        ERR_MEMORY_FULL_REMOTE, /**< Trying to upload a ressource to remote which have his memory full */
+        ERR_HOST_NOT_FOUND,     /**< Host server informations are either invalid or unreachable */
+        ERR_HOST_REFUSED,       /**< Host server refused connection */
+        ERR_CONTENT_NOT_FOUND   /**< Ressource could not be found */
     };
 
 public:

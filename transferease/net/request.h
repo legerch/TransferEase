@@ -1,8 +1,8 @@
 #ifndef TEASE_NET_REQUEST_H
 #define TEASE_NET_REQUEST_H
 
-#include "net/bytesarray.h"
-#include "net/url.h"
+#include "bytesarray.h"
+#include "url.h"
 
 namespace tease
 {
@@ -11,17 +11,20 @@ class Request final
 {
 
 public:
+    /*!
+     * \brief List of types of transfers
+     */
     enum TypeTransfer
     {
-        TRANSFER_UNK = 0,
+        TRANSFER_UNK = 0,   /**< Unknown type of transfer, mainly used to represent an unitialized transfer */
 
-        TRANSFER_DOWNLOAD,
-        TRANSFER_UPLOAD
+        TRANSFER_DOWNLOAD,  /**< Ressources are downloaded from \b remote to \b host */
+        TRANSFER_UPLOAD     /**< Ressources are uploaded from \b host to \b remote */
     };
 
 public:
-    using PtrShared = std::shared_ptr<Request>;
-    using List = std::vector<PtrShared>;
+    using PtrShared = std::shared_ptr<Request>; /**< Request shared pointer type alias */
+    using List = std::vector<PtrShared>;        /**< Alias representing a list of requests */
 
 public:
     Request();

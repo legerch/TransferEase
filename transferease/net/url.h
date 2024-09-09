@@ -13,6 +13,8 @@ class Url final
 public:
     /*!
      * \brief List of supported schemes
+     *
+     * \sa idSchemeToString(), idSchemeFromString()
      */
     enum IdScheme
     {

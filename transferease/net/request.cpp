@@ -8,7 +8,14 @@
 
 /*!
  * \class tease::Request
- * \brief Do doc
+ * \brief Manage a ressource request informations
+ * \details
+ * This class will be used to store request informations : where to download,
+ * where to upload, etc... and associated datas. \n
+ * This class will be responsible to store I/O informations used
+ * during transfer.
+ *
+ * \sa configureDownload(), configureUpload()
  */
 
 /*****************************/
@@ -114,18 +121,53 @@ void Request::clear()
     d_ptr->clear();
 }
 
+/*!
+ * \brief Use to configure \b download request
+ * \details
+ * Once request transfer will be completed (and with sucess),
+ * downloaded data will be available via \c getData().
+ *
+ * \param[in] targetUrl
+ * URL of ressource to download
+ *
+ * \sa configureUpload()
+ */
 void Request::configureDownload(const Url &targetUrl)
 {
     d_ptr->configureTransfer(TRANSFER_DOWNLOAD, targetUrl);
     d_ptr->m_data.clear();
 }
 
+/*!
+ * \brief Use to configure \b upload request
+ *
+ * \param[in] dstUrl
+ * URL used to upload the ressource.
+ * \param[in] inputData
+ * Data to upload. \n
+ * Those will be copied, so to limit copy, please
+ * use the overloaded method.
+ *
+ * \sa configureDownload()
+ */
 void Request::configureUpload(const Url &dstUrl, const BytesArray &inputData)
 {
     d_ptr->configureTransfer(TRANSFER_UPLOAD, dstUrl);
     d_ptr->m_data = inputData;
 }
 
+/*!
+ * \overload
+
+ * \param[in] dstUrl
+ * URL used to upload the ressource.
+ * \param[in,out] inputData
+ * Data to upload without performing a deep copy. \n
+ * Can be called with:
+ * \code{.cpp}
+ * request->configureUpload(myCustomUrl, std::move(byteArrayToUpload));
+ * \endcode
+ */
 void Request::configureUpload(const Url &dstUrl, BytesArray &&inputData)
 {
     d_ptr->configureTransfer(TRANSFER_UPLOAD, dstUrl);
