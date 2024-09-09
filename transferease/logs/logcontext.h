@@ -1,7 +1,7 @@
 #ifndef TEASE_LOGS_LOGCONTEXT_H
 #define TEASE_LOGS_LOGCONTEXT_H
 
-#include "transferease_global.h"
+#include "../transferease_global.h"
 
 namespace tease{
 

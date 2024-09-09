@@ -471,8 +471,8 @@ TransferManager::IdError TransferManager::startDownload(const Request::List &lis
         }
 
         const Url &url = req->getUrl();
-        if(url.isValid()){
-            const std::string err = StringHelper::format("Receive invalid URL [id-scheme: %d, host: %s, path: %s]", url.getIdScheme(), url.getHost(), url.getPath());
+        if(!url.isValid()){
+            const std::string err = StringHelper::format("Receive invalid URL [id-scheme: %d, host: %s, path: %s]", url.getIdScheme(), url.getHost().c_str(), url.getPath().c_str());
             TEASE_LOG_ERROR(err);
             return ERR_INVALID_REQUEST;
         }

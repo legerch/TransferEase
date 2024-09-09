@@ -314,7 +314,7 @@ Url::IdScheme Url::idSchemeFromString(const std::string &idScheme)
 
     /* Do we have found a scheme */
     if(it == Url::Impl::MAP_ID_SCHEME_TO_STRING.cend()){
-        const std::string err = StringHelper::format("No supported scheme ID match string '%s'", idScheme);
+        const std::string err = StringHelper::format("No supported scheme ID match string '%s'", idScheme.c_str());
         TEASE_LOG_WARN(err);
         return SCHEME_UNK;
     }
