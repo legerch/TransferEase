@@ -266,7 +266,7 @@ bool TransferManager::Impl::manageStatus(Request::TypeTransfer typeTransfer, IdE
         }
 
         // Prepare new trial for current request
-        req->ioReset();
+        req->ioRegisterTry();
 
         curl_multi_remove_handle(m_handleMulti, handle);
         curl_easy_reset(handle);

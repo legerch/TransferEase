@@ -41,7 +41,7 @@ public:
 
 public:
     size_t ioReadFromBytesArray(char *buffer, size_t nbBytes);
-    void ioReset();
+    void ioReset(bool resetNbTrials = true);
 
     void clear();
 
@@ -84,13 +84,16 @@ size_t Request::Impl::ioReadFromBytesArray(char *buffer, size_t nbBytes)
     return nbBytesToRead;
 }
 
-void Request::Impl::ioReset()
+void Request::Impl::ioReset(bool resetNbTrials)
 {
     m_dataNbRead = 0;
 
     m_ioTotal = 0;
     m_ioCurrent = 0;
-    m_ioNbTrials = 0;
+
+    if(resetNbTrials){
+        m_ioNbTrials = 0;
+    }
 }
 
 void Request::Impl::clear()
@@ -211,12 +214,13 @@ void Request::ioSetSizeCurrent(size_t size)
 
 void Request::ioRegisterTry()
 {
+    d_ptr->ioReset(false);
     ++d_ptr->m_ioNbTrials;
 }
 
 void Request::ioReset()
 {
-    d_ptr->ioReset();
+    d_ptr->ioReset(true);
 }
 
 size_t Request::ioGetSizeTotal() const
