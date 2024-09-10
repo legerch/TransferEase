@@ -57,8 +57,9 @@ public:
 private:
     bool downloadPrepare();
 
+    bool performTransfer(IdError &idErr);
     void updateProgress(Request::TypeTransfer typeTransfer);
-    bool manageStatus(Request::TypeTransfer typeTransfer, IdError &idErr);
+    IdError manageStatus(Request::TypeTransfer typeTransfer, int &counterReqsDone);
     bool errorAllowRetry(CURLcode curlErr, IdError &idErr);
 
     void cleanHandles();
@@ -139,8 +140,10 @@ void TransferManager::Impl::init()
 
 void TransferManager::Impl::jobDownload()
 {
+    const int nbReqsTodo = m_listReqs.size();
+    int nbReqsDone = 0;
+
     IdError failureStatus = ERR_NO_ERROR;
-    int stillRunning = 0;
 
     /* Inform that download is started */
     m_cbStarted(Request::TRANSFER_DOWNLOAD);
@@ -152,15 +155,18 @@ void TransferManager::Impl::jobDownload()
         goto stat_clean;
     }
 
-    /* Perform download */
-    do{
-        // Execute download
-        CURLMcode idErr = curl_multi_perform(m_handleMulti, &stillRunning);
-        if(idErr != CURLM_OK){
-            failureStatus = ERR_INTERNAL;
+    /* Do first call to perform transfer */
+    succeed = performTransfer(failureStatus);
+    if(!succeed){
+        goto stat_clean;
+    }
 
-            const std::string err = StringHelper::format("Error when trying to perform on multi handle [id-err: %d]", idErr);
-            TEASE_LOG_ERROR(err);
+    /* Perform download */
+    while(nbReqsDone < nbReqsTodo){
+        // Perform polling
+        curl_multi_wait(m_handleMulti, nullptr, 0, 1000, nullptr);
+        succeed = performTransfer(failureStatus);
+        if(!succeed){
             goto stat_clean;
         }
 
@@ -168,14 +174,11 @@ void TransferManager::Impl::jobDownload()
         updateProgress(Request::TRANSFER_DOWNLOAD);
 
         // Manage status
-        bool canContinue = manageStatus(Request::TRANSFER_DOWNLOAD, failureStatus);
-        if(!canContinue){
+        failureStatus = manageStatus(Request::TRANSFER_DOWNLOAD, nbReqsDone);
+        if(failureStatus != ERR_NO_ERROR){
             goto stat_clean;
         }
-
-        // Perform polling
-        curl_multi_wait(m_handleMulti, nullptr, 0, 1000, nullptr);
-    }while(stillRunning);
+    }
 
     /* Clean used ressources */
 stat_clean:
@@ -214,11 +217,27 @@ bool TransferManager::Impl::downloadPrepare()
     return true;
 }
 
+bool TransferManager::Impl::performTransfer(IdError &idErr)
+{
+    int nbReqsRunning;
+
+    CURLMcode curlErr = curl_multi_perform(m_handleMulti, &nbReqsRunning);
+    if(curlErr != CURLM_OK){
+        idErr = ERR_INTERNAL;
+
+        const std::string err = StringHelper::format("Error when trying to perform on multi handle [curl-err: %d]", curlErr);
+        TEASE_LOG_ERROR(err);
+        return false;
+    }
+
+    return true;
+}
+
 void TransferManager::Impl::updateProgress(Request::TypeTransfer typeTransfer)
 {
     /* Calculate list progress */
     size_t sizeTotal = 0, sizeCurrent = 0;
-    for(auto req : m_listReqs){
+    for(const auto &req : m_listReqs){
         sizeTotal += req->ioGetSizeTotal();
         sizeCurrent += req->ioGetSizeCurrent();
     }
@@ -227,8 +246,9 @@ void TransferManager::Impl::updateProgress(Request::TypeTransfer typeTransfer)
     m_cbProgress(typeTransfer, sizeTotal, sizeCurrent);
 }
 
-bool TransferManager::Impl::manageStatus(Request::TypeTransfer typeTransfer, IdError &idErr)
+TransferManager::IdError TransferManager::Impl::manageStatus(Request::TypeTransfer typeTransfer, int &counterReqsDone)
 {
+    IdError idErr = ERR_NO_ERROR;
     CURLMsg *msg = nullptr;
     int nbMsgLeft = 0;
 
@@ -239,16 +259,17 @@ bool TransferManager::Impl::manageStatus(Request::TypeTransfer typeTransfer, IdE
             continue; // Read status of next request
         }
 
-        // Ignore requests which succeed
+        // Count requests which succeed
         const CURLcode curlErr = msg->data.result;
         if(curlErr == CURLE_OK){
+            ++counterReqsDone;
             continue;
         }
 
         // Do error allow us to a retry ? */
         const bool retryAllowed = errorAllowRetry(curlErr, idErr);
         if(!retryAllowed){
-            return false;
+            return idErr;
         }
 
         // Retrieve current request informations
@@ -261,8 +282,7 @@ bool TransferManager::Impl::manageStatus(Request::TypeTransfer typeTransfer, IdE
             const std::string err = StringHelper::format("Reached maximum number of trials [url: %s, curl-err: %d]", req->getUrl().toString().c_str(), curlErr);
             TEASE_LOG_WARN(err);
 
-            idErr = ERR_MAX_TRIALS;
-            return false;
+            return ERR_MAX_TRIALS;
         }
 
         // Prepare new trial for current request
@@ -279,7 +299,7 @@ bool TransferManager::Impl::manageStatus(Request::TypeTransfer typeTransfer, IdE
         curl_multi_add_handle(m_handleMulti, handle);
     }
 
-    return true;
+    return ERR_NO_ERROR;
 }
 
 bool TransferManager::Impl::errorAllowRetry(CURLcode curlErr, IdError &idErr)
