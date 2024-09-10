@@ -25,6 +25,7 @@
 /* Macro definitions         */
 /*****************************/
 #define DEFAULT_NB_MAX_TRIALS   1
+#define DEFAULT_TIMEOUT_CONNECT 10L
 
 /*****************************/
 /* Start namespace           */
@@ -86,6 +87,7 @@ public:
     std::string m_username;
     std::string m_userpwd;
     int m_nbMaxTrials;
+    long m_timeoutConnect;
 
     Thread m_threadTransfer;
     std::mutex m_mutex;
@@ -118,6 +120,7 @@ TransferManager::Impl::Impl(TransferManager *parent)
     }
 
     m_nbMaxTrials = DEFAULT_NB_MAX_TRIALS;
+    m_timeoutConnect = DEFAULT_TIMEOUT_CONNECT;
     m_parent = parent;
 }
 
@@ -383,6 +386,9 @@ void TransferManager::Impl::configureHandleDl(CURL *handle, Request *req)
     curl_easy_setopt(handle, CURLOPT_XFERINFOFUNCTION, curlCbProgress);
     curl_easy_setopt(handle, CURLOPT_XFERINFODATA, req);
     curl_easy_setopt(handle, CURLOPT_NOPROGRESS, 0L); // Enable progress meter
+
+    /* Request configurations */
+    curl_easy_setopt(handle, CURLOPT_CONNECTTIMEOUT, m_timeoutConnect);
 }
 
 size_t TransferManager::Impl::curlCbWrite(char *ptr, size_t size, size_t nmemb, void *userdata)
@@ -526,12 +532,45 @@ void TransferManager::setUserInfos(const std::string &username, const std::strin
     d_ptr->m_userpwd = passwd;
 }
 
+/*!
+ * \brief Use to set maximum number
+ * of trials
+ * \details
+ * If a request fail, it will be restarted until
+ * max number of trials is reached. \n
+ * Default value is: \c 1
+ *
+ * \param[in] nbTrials
+ * Maximum number of trials allowed
+ */
 void TransferManager::setNbMaxTrials(int nbTrials)
 {
     Impl::Locker locker(d_ptr->m_mutex);
 
     nbTrials = std::max(0, nbTrials);
     d_ptr->m_nbMaxTrials = nbTrials;
+}
+
+/*!
+ * \brief Use to set the maximum time in seconds
+ * that allow connection phase to take
+ * \details
+ * This timeout only limits the connection phase, it has
+ * no impact once connection has been done. \n
+ * The connection phase includes the name resolve (DNS)
+ * and all protocol handshakes and negotiations until
+ * there is an established connection with the remote side.
+ *
+ * \param[in] timeout
+ * Timeout in seconds. \n
+ * Default value is: \c 10
+ */
+void TransferManager::setTimeoutConnection(long timeout)
+{
+    Impl::Locker locker(d_ptr->m_mutex);
+
+    timeout = std::max(0L, timeout);
+    d_ptr->m_timeoutConnect = timeout;
 }
 
 void TransferManager::setCbStarted(CbStarted fct)
