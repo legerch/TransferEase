@@ -114,15 +114,15 @@ bool Url::Impl::parseUrl(const std::string &url)
         return false;
     }
 
-    m_idScheme = idScheme;
-    m_host = matchesRes[2].str();
-    m_path = matchesRes[4].str();
+    m_parent->setIdScheme(idScheme);
+    m_parent->setHost(matchesRes[2].str());
+    m_parent->setPath(matchesRes[4].str());
 
     // Optional fields
     if(matchesRes[3].matched){
-        m_port = StringHelper::toInt(matchesRes[3].str());
+        m_parent->setPort(StringHelper::toInt(matchesRes[3].str()));
     }else{
-        m_port = 0;
+        m_parent->setPort(0);
     }
 
     return m_parent->isValid();
@@ -216,7 +216,16 @@ void Url::setPort(uint16_t port)
 
 void Url::setPath(const std::string &path)
 {
-    d_ptr->m_path = path;
+    /* Clear previous path */
+    d_ptr->m_path.clear();
+
+    /* Manage missing path separator */
+    if(!path.empty() && path.front() != '/'){
+        d_ptr->m_path += '/';
+    }
+
+    /* Add path */
+    d_ptr->m_path += path;
 }
 
 /*!
