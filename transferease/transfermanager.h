@@ -53,6 +53,7 @@ public:
     void setUserInfos(const std::string &username, const std::string &passwd);
     void setNbMaxTrials(int nbTrials);
     void setTimeoutConnection(long timeout);
+    void setTimeoutTransfer(long timeout);
 
 public:
     void setCbStarted(CbStarted fct);

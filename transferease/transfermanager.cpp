@@ -97,8 +97,11 @@
 /*****************************/
 /* Macro definitions         */
 /*****************************/
-#define DEFAULT_NB_MAX_TRIALS   1
-#define DEFAULT_TIMEOUT_CONNECT 10L
+#define DEFAULT_NB_MAX_TRIALS       1
+#define DEFAULT_TIMEOUT_CONNECT     10L /**< Unit in seconds */
+#define DEFAULT_TIMEOUT_TRANSFER    10L /**< Unit in seconds */
+
+#define MIN_SPEED_LIMIT             30L /**< Unit in bytes/sec */
 
 /*****************************/
 /* Start namespace           */
@@ -161,6 +164,7 @@ public:
     std::string m_userpwd;
     int m_nbMaxTrials;
     long m_timeoutConnect;
+    long m_timeoutTransfer;
 
     Thread m_threadTransfer;
     std::mutex m_mutex;
@@ -194,6 +198,7 @@ TransferManager::Impl::Impl(TransferManager *parent)
 
     m_nbMaxTrials = DEFAULT_NB_MAX_TRIALS;
     m_timeoutConnect = DEFAULT_TIMEOUT_CONNECT;
+    m_timeoutTransfer = DEFAULT_TIMEOUT_TRANSFER;
     m_parent = parent;
 }
 
@@ -463,8 +468,13 @@ void TransferManager::Impl::configureHandleDl(CURL *handle, Request *req)
     curl_easy_setopt(handle, CURLOPT_XFERINFODATA, req);
     curl_easy_setopt(handle, CURLOPT_NOPROGRESS, 0L); // Enable progress meter
 
-    /* Request configurations */
+    /* Manage timeouts */
+    // Maximum time allowed to connect to host
     curl_easy_setopt(handle, CURLOPT_CONNECTTIMEOUT, m_timeoutConnect);
+
+    // Minimum allowed speed (if transfer rate is below the limit for the configured timeout transfer, transfer will timeout)
+    curl_easy_setopt(handle, CURLOPT_LOW_SPEED_LIMIT, MIN_SPEED_LIMIT);
+    curl_easy_setopt(handle, CURLOPT_LOW_SPEED_TIME, m_timeoutTransfer);
 }
 
 size_t TransferManager::Impl::curlCbWrite(char *ptr, size_t size, size_t nmemb, void *userdata)
@@ -689,6 +699,7 @@ void TransferManager::setNbMaxTrials(int nbTrials)
  *
  * \param[in] timeout
  * Timeout in seconds. \n
+ * To disable it, use value <tt>0</tt>.
  * Default value is: \c 10
  *
  * \note
@@ -700,6 +711,32 @@ void TransferManager::setTimeoutConnection(long timeout)
 
     timeout = std::max(0L, timeout);
     d_ptr->m_timeoutConnect = timeout;
+}
+
+/*!
+ * \brief Use to set the maximum time in seconds
+ * to wait when no data is received before considering
+ * a timeout.
+ * \details
+ * This timeout is used when connection to host has been made,
+ * it will check for average speed transfer. \n
+ * If transfer speed is below \c 20 bytes/sec for
+ * \c timeout time, request is aborted (and retried if available).
+ *
+ * \param[in] timeout
+ * Timeout in seconds. \n
+ * To disable it, use value <tt>0</tt>.
+ * Default value is: \c 10
+ *
+ * \note
+ * This method is \em thread-safe
+ */
+void TransferManager::setTimeoutTransfer(long timeout)
+{
+    Impl::Locker locker(d_ptr->m_mutex);
+
+    timeout = std::max(0L, timeout);
+    d_ptr->m_timeoutTransfer = timeout;
 }
 
 /*!
