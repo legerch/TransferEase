@@ -362,6 +362,9 @@ TransferManager::IdError TransferManager::Impl::manageStatus(Request::TypeTransf
         }
 
         // Prepare new trial for current request
+        const std::string logTrial = StringHelper::format("Perform new trial for request [url: %s, nb-trials: %d, curl-err: %d]", req->getUrl().toString().c_str(), req->ioGetNbTrials(), curlErr);
+        TEASE_LOG_DEBUG(logTrial);
+
         req->ioRegisterTry();
 
         curl_multi_remove_handle(m_handleMulti, handle);
@@ -558,6 +561,8 @@ TransferManager::~TransferManager() = default;
  * Once transfer is finished, user can read request content directly
  *
  * \note
+ * This method is \em thread-safe
+ * \note
  * This method is asynchronous, so please use dedicated callbacks
  * to manage transfer status.
  *
@@ -607,11 +612,16 @@ TransferManager::IdError TransferManager::startDownload(const Request::List &lis
  * \brief Verify is a tranfer is in progress
  * or not
  *
+ * \note
+ * This method is \em thread-safe
+ *
  * \return
  * Returns \c true if a transfer is currently running
  */
 bool TransferManager::transferIsInProgress() const
 {
+    Impl::Locker locker(d_ptr->m_mutex);
+
     /* Do thread is set ? */
     if(!d_ptr->m_threadTransfer.valid()){
         return false;
@@ -632,7 +642,7 @@ bool TransferManager::transferIsInProgress() const
  * Login password to use.
  *
  * \note
- * This method is \c thread-safe
+ * This method is \em thread-safe
  * \note
  * If credentials are invalid, transfer will failed
  * with error TransferManager::ERR_INVALID_LOGIN
@@ -657,7 +667,7 @@ void TransferManager::setUserInfos(const std::string &username, const std::strin
  * Maximum number of trials allowed
  *
  * \note
- * This method is \c thread-safe
+ * This method is \em thread-safe
  */
 void TransferManager::setNbMaxTrials(int nbTrials)
 {
@@ -682,7 +692,7 @@ void TransferManager::setNbMaxTrials(int nbTrials)
  * Default value is: \c 10
  *
  * \note
- * This method is \c thread-safe
+ * This method is \em thread-safe
  */
 void TransferManager::setTimeoutConnection(long timeout)
 {
@@ -703,7 +713,7 @@ void TransferManager::setTimeoutConnection(long timeout)
  * Callback function to use when transfer is started
  *
  * \note
- * This method is \c thread-safe
+ * This method is \em thread-safe
  */
 void TransferManager::setCbStarted(CbStarted fct)
 {
@@ -722,7 +732,7 @@ void TransferManager::setCbStarted(CbStarted fct)
  * Callback function to use for transfer progress
  *
  * \note
- * This method is \c thread-safe
+ * This method is \em thread-safe
  */
 void TransferManager::setCbProgress(CbProgress fct)
 {
@@ -741,7 +751,7 @@ void TransferManager::setCbProgress(CbProgress fct)
  * Callback function to use when transfer is completed
  *
  * \note
- * This method is \c thread-safe
+ * This method is \em thread-safe
  */
 void TransferManager::setCbCompleted(CbCompleted fct)
 {
@@ -760,7 +770,7 @@ void TransferManager::setCbCompleted(CbCompleted fct)
  * Callback function to use when transfer has failed
  *
  * \note
- * This method is \c thread-safe
+ * This method is \em thread-safe
  */
 void TransferManager::setCbFailed(CbFailed fct)
 {
