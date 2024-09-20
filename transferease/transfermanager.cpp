@@ -14,11 +14,84 @@
 
 /*!
  * \class tease::TransferManager
- * \brief Use to manage URLs
+ * \brief Use to perform download/upload
+ * of ressources easily.
  * \details
+ * This class will allow to easily perform download/upload
+ * ressources from/to a remote. \n
+ * A simple example used to download a list of request:
+ * \include{lineno} requests-download.cpp
+ *
+ * \note
+ * For a more \em real-world example, we can refer
+ * to application using this library at: \n
+ * https://github.com/legerch/TransferEaseApp
+ *
+ * This class allow to register custom callbacks using
+ * \c std::function type. We have multiple ways to register
+ * a callback function:
+ * \include callback-registration.cpp
+ *
+ * \note
  * Some developer useful docs:
  * - https://everything.curl.dev/
  * - https://curl.se/libcurl/c/
+ *
+ * \sa startDownload()
+ */
+
+/*****************************/
+/* Callbacks documentations  */
+/*****************************/
+
+/*!
+ * \typedef TransferManager::CbStarted
+ * \brief Callback called when transfer has been started
+ *
+ * \param[in] typeTransfer
+ * Type of transfer being started.
+ *
+ * \sa setCbStarted()
+ * \sa startDownload()
+ */
+
+/*!
+ * \typedef TransferManager::CbProgress
+ * \brief Callback called during transfer
+ *
+ * \param[in] typeTransfer
+ * Type of transfer being started.
+ * \param[in] transferTotal
+ * Total size of the transfer in bytes
+ * \param[in] transferNow
+ * Current values of transfered data in bytes
+ *
+ * \sa setCbProgress()
+ * \sa startDownload()
+ */
+
+/*!
+ * \typedef TransferManager::CbCompleted
+ * \brief Callback called when transfer finished
+ * and succeed
+ *
+ * \param[in] typeTransfer
+ * Type of transfer which succeeded to complete.
+ *
+ * \sa setCbCompleted()
+ * \sa startDownload()
+ */
+
+/*!
+ * \typedef TransferManager::CbFailed
+ * \brief Callback called when transfer finished
+ * due to an error
+ *
+ * \param[in] typeTransfer
+ * Type of transfer which failed to complete.
+ *
+ * \sa setCbFailed()
+ * \sa startDownload()
  */
 
 /*****************************/
@@ -475,6 +548,23 @@ TransferManager::TransferManager() :
 
 TransferManager::~TransferManager() = default;
 
+/*!
+ * \brief Use to start downloading list of requests
+ *
+ * \param[in, out] listReqs
+ * List of requests to download. \n
+ * This argument is a list of request pointers, those will be directly
+ * filled with downloaded datas, so pointers must remains valid. \n
+ * Once transfer is finished, user can read request content directly
+ *
+ * \note
+ * This method is asynchronous, so please use dedicated callbacks
+ * to manage transfer status.
+ *
+ * \return
+ * Returns \c TransferManager::ERR_NO_ERROR if download succeed to be prepared. \n
+ * This method will return \c TransferManager::ERR_BUSY error if called from a callback.
+ */
 TransferManager::IdError TransferManager::startDownload(const Request::List &listReqs)
 {
     /* Verify that a transfer is not already running */
@@ -513,6 +603,13 @@ TransferManager::IdError TransferManager::startDownload(const Request::List &lis
     return ERR_NO_ERROR;
 }
 
+/*!
+ * \brief Verify is a tranfer is in progress
+ * or not
+ *
+ * \return
+ * Returns \c true if a transfer is currently running
+ */
 bool TransferManager::transferIsInProgress() const
 {
     /* Do thread is set ? */
@@ -524,6 +621,22 @@ bool TransferManager::transferIsInProgress() const
     return d_ptr->m_threadTransfer.wait_for(std::chrono::seconds(0)) != std::future_status::ready;
 }
 
+/*!
+ * \brief Use to set user informations
+ * \details
+ * Can be useful if server require authentication.
+ *
+ * \param[in] username
+ * Login username to use.
+ * \param[in] passwd
+ * Login password to use.
+ *
+ * \note
+ * This method is \c thread-safe
+ * \note
+ * If credentials are invalid, transfer will failed
+ * with error TransferManager::ERR_INVALID_LOGIN
+ */
 void TransferManager::setUserInfos(const std::string &username, const std::string &passwd)
 {
     Impl::Locker locker(d_ptr->m_mutex);
@@ -542,6 +655,9 @@ void TransferManager::setUserInfos(const std::string &username, const std::strin
  *
  * \param[in] nbTrials
  * Maximum number of trials allowed
+ *
+ * \note
+ * This method is \c thread-safe
  */
 void TransferManager::setNbMaxTrials(int nbTrials)
 {
@@ -564,6 +680,9 @@ void TransferManager::setNbMaxTrials(int nbTrials)
  * \param[in] timeout
  * Timeout in seconds. \n
  * Default value is: \c 10
+ *
+ * \note
+ * This method is \c thread-safe
  */
 void TransferManager::setTimeoutConnection(long timeout)
 {
@@ -573,30 +692,93 @@ void TransferManager::setTimeoutConnection(long timeout)
     d_ptr->m_timeoutConnect = timeout;
 }
 
+/*!
+ * \brief Use to set started transfer callback
+ * \details
+ * Default callback will simply log a message. \n
+ * See TransferManager documentation for more details
+ * on how to set the callback.
+ *
+ * \param[in] fct
+ * Callback function to use when transfer is started
+ *
+ * \note
+ * This method is \c thread-safe
+ */
 void TransferManager::setCbStarted(CbStarted fct)
 {
     Impl::Locker locker(d_ptr->m_mutex);
     d_ptr->m_cbStarted = fct;
 }
 
+/*!
+ * \brief Use to set progress transfer callback
+ * \details
+ * Default callback will simply log a message. \n
+ * See TransferManager documentation for more details
+ * on how to set the callback.
+ *
+ * \param[in] fct
+ * Callback function to use for transfer progress
+ *
+ * \note
+ * This method is \c thread-safe
+ */
 void TransferManager::setCbProgress(CbProgress fct)
 {
     Impl::Locker locker(d_ptr->m_mutex);
     d_ptr->m_cbProgress = fct;
 }
 
+/*!
+ * \brief Use to set completed transfer callback
+ * \details
+ * Default callback will simply log a message. \n
+ * See TransferManager documentation for more details
+ * on how to set the callback.
+ *
+ * \param[in] fct
+ * Callback function to use when transfer is completed
+ *
+ * \note
+ * This method is \c thread-safe
+ */
 void TransferManager::setCbCompleted(CbCompleted fct)
 {
     Impl::Locker locker(d_ptr->m_mutex);
     d_ptr->m_cbCompleted = fct;
 }
 
+/*!
+ * \brief Use to set failed transfer callback
+ * \details
+ * Default callback will simply log a message. \n
+ * See TransferManager documentation for more details
+ * on how to set the callback.
+ *
+ * \param[in] fct
+ * Callback function to use when transfer has failed
+ *
+ * \note
+ * This method is \c thread-safe
+ */
 void TransferManager::setCbFailed(CbFailed fct)
 {
     Impl::Locker locker(d_ptr->m_mutex);
     d_ptr->m_cbFailed = fct;
 }
 
+/*!
+ * \brief Use to convert progress data to a percentage
+ *
+ * \param[in] transferTotal
+ * Total size of the transfer
+ * \param[in] transferNow
+ * Current size of transferred datas
+ *
+ * \return
+ * Return progress percentage.
+ */
 double TransferManager::transferProgressToPercent(size_t transferTotal, size_t transferNow)
 {
     return (static_cast<double>(transferNow) / transferTotal) * 100.0;
