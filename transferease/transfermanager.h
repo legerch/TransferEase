@@ -49,6 +49,10 @@ public:
     IdError startDownload(const Request::List &listReqs);
     bool transferIsInProgress() const;
 
+    int getNbMaxTrials() const;
+    long getTimeoutConnection() const;
+    long getTimeoutTransfer() const;
+
 public:
     void setUserInfos(const std::string &username, const std::string &passwd);
     void setNbMaxTrials(int nbTrials);

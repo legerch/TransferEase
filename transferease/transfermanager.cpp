@@ -642,6 +642,60 @@ bool TransferManager::transferIsInProgress() const
 }
 
 /*!
+ * \brief Retrieve maximum number of trials
+ * currently set.
+ *
+ * \note
+ * This method is \em thread-safe
+ *
+ * \return
+ * Returns maximum number of trials currently set.
+ *
+ * \sa setNbMaxTrials()
+ */
+int TransferManager::getNbMaxTrials() const
+{
+    Impl::Locker locker(d_ptr->m_mutex);
+    return d_ptr->m_nbMaxTrials;
+}
+
+/*!
+ * \brief Retrieve connection timeout.
+ *
+ * \note
+ * This method is \em thread-safe
+ *
+ * \return
+ * Returns connection timeout in seconds
+ * currently set.
+ *
+ * \sa setTimeoutConnection()
+ */
+long TransferManager::getTimeoutConnection() const
+{
+    Impl::Locker locker(d_ptr->m_mutex);
+    return d_ptr->m_timeoutConnect;
+}
+
+/*!
+ * \brief Retrieve transfer timeout.
+ *
+ * \note
+ * This method is \em thread-safe
+ *
+ * \return
+ * Returns transfer timeout in seconds
+ * currently set.
+ *
+ * \sa setTimeoutTransfer()
+ */
+long TransferManager::getTimeoutTransfer() const
+{
+    Impl::Locker locker(d_ptr->m_mutex);
+    return d_ptr->m_timeoutTransfer;
+}
+
+/*!
  * \brief Use to set user informations
  * \details
  * Can be useful if server require authentication.
@@ -678,6 +732,8 @@ void TransferManager::setUserInfos(const std::string &username, const std::strin
  *
  * \note
  * This method is \em thread-safe
+ *
+ * \sa getNbMaxTrials()
  */
 void TransferManager::setNbMaxTrials(int nbTrials)
 {
@@ -704,6 +760,8 @@ void TransferManager::setNbMaxTrials(int nbTrials)
  *
  * \note
  * This method is \em thread-safe
+ *
+ * \sa getTimeoutConnection()
  */
 void TransferManager::setTimeoutConnection(long timeout)
 {
@@ -730,6 +788,8 @@ void TransferManager::setTimeoutConnection(long timeout)
  *
  * \note
  * This method is \em thread-safe
+ *
+ * \sa getTimeoutTransfer()
  */
 void TransferManager::setTimeoutTransfer(long timeout)
 {
