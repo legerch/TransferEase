@@ -1,13 +1,15 @@
 #ifndef TEASE_NET_URL_H
 #define TEASE_NET_URL_H
 
+#include "transferease/transferease_global.h"
+
 #include <memory>
 #include <string>
 
 namespace tease
 {
 
-class Url final
+class TEASE_EXPORT Url final
 {
 
 public:
@@ -70,8 +72,8 @@ public:
     Url& operator=(Url &&other) noexcept;
 
 public:
-    friend bool operator==(const Url &left, const Url &right);
-    friend bool operator!=(const Url &left, const Url &right);
+    TEASE_EXPORT friend bool operator==(const Url &left, const Url &right);
+    TEASE_EXPORT friend bool operator!=(const Url &left, const Url &right);
 
 private:
     class Impl;

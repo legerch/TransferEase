@@ -1,4 +1,4 @@
-#include "logmanager.h"
+#include "transferease/logs/logmanager.h"
 
 /*****************************/
 /* Class documentations      */

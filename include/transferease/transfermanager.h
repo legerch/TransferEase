@@ -9,7 +9,7 @@
 namespace tease
 {
 
-class TransferManager final
+class TEASE_EXPORT TransferManager final
 {
     TEASE_DISABLE_COPY_MOVE(TransferManager)
 

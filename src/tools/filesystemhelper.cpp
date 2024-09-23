@@ -1,6 +1,7 @@
 #include "filesystemhelper.h"
 
-#include "logs/logmanager.h"
+#include "transferease/logs/logmanager.h"
+
 #include "stringhelper.h"
 
 std::filesystem::__cxx11::path tease::FileSystemHelper::getFilePathDir(const std::string &filepath)

@@ -1,6 +1,7 @@
-#include "bytesarray.h"
+#include "transferease/net/bytesarray.h"
 
-#include "logs/logmanager.h"
+#include "transferease/logs/logmanager.h"
+
 #include "tools/filesystemhelper.h"
 #include "tools/stringhelper.h"
 
@@ -257,7 +258,7 @@ void BytesArray::setFromString(std::string_view strView)
  */
 bool BytesArray::setFromFile(const std::string &pathFile)
 {
-    static constexpr size_t sizeLimit = 1024 * 1024 * 1024; // Represent 1Gb
+    static constexpr std::streamsize sizeLimit = 1024 * 1024 * 1024; // Represent 1Gb
 
     /* Clear any previous data */
     clear();

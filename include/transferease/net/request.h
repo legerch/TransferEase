@@ -7,7 +7,7 @@
 namespace tease
 {
 
-class Request final
+class TEASE_EXPORT Request final
 {
 
 public:

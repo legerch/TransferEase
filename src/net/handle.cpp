@@ -2,7 +2,8 @@
 
 #include <curl/curl.h>
 
-#include "logs/logmanager.h"
+#include "transferease/logs/logmanager.h"
+
 #include "tools/stringhelper.h"
 
 /*****************************/

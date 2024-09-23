@@ -1,9 +1,10 @@
-#include "url.h"
+#include "transferease/net/url.h"
 
 #include <regex>
 #include <unordered_map>
 
-#include "logs/logmanager.h"
+#include "transferease/logs/logmanager.h"
+
 #include "tools/stringhelper.h"
 
 /*****************************/

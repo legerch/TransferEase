@@ -1,6 +1,8 @@
 #ifndef TEASE_NET_BYTESARRAY_H
 #define TEASE_NET_BYTESARRAY_H
 
+#include "transferease/transferease_global.h"
+
 #include <memory>
 #include <string>
 #include <string_view>
@@ -9,7 +11,7 @@
 namespace tease
 {
 
-class BytesArray final
+class TEASE_EXPORT BytesArray final
 {
 
 public:
@@ -81,8 +83,8 @@ public:
     BytesArray& operator=(BytesArray &&other) noexcept;
 
 public:
-    friend bool operator==(const BytesArray &left, const BytesArray &right);
-    friend bool operator!=(const BytesArray &left, const BytesArray &right);
+    TEASE_EXPORT friend bool operator==(const BytesArray &left, const BytesArray &right);
+    TEASE_EXPORT friend bool operator!=(const BytesArray &left, const BytesArray &right);
 
 private:
     class Impl;

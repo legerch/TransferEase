@@ -1,7 +1,7 @@
-#ifndef HANDLE_H
-#define HANDLE_H
+#ifndef TEASE_NET_HANDLE_H
+#define TEASE_NET_HANDLE_H
 
-#include "transferease_global.h"
+#include "transferease/transferease_global.h"
 
 namespace tease
 {
@@ -20,4 +20,4 @@ private:
 
 } // namespace tease
 
-#endif // HANDLE_H
+#endif // TEASE_NET_HANDLE_H

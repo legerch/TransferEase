@@ -1,8 +1,6 @@
 #ifndef TEASE_GLOBAL_H
 #define TEASE_GLOBAL_H
 
-#include "config.h"
-
 /**********************************
  * Library management
  *********************************/
@@ -21,9 +19,28 @@
 #endif
 
 /**********************************
+ * Version management
+ *********************************/
+#define TEASE_VERSION_ENCODE(major, minor, path)    ((major) * 10000 + (minor) * 100 + (patch)) /**< Use to perform compilation version comparisons. Example:
+                                                                                                    \code{.cpp}
+                                                                                                    #if TEASE_VERSION > TEASE_VERSION_ENCODE(1,0,0)
+                                                                                                        // Do stuff for version 1.0.0 or higher
+                                                                                                    #else
+                                                                                                        // Do stuff for version 0.0.x
+                                                                                                    #endif
+                                                                                                    \endcode
+                                                                                                */
+
+#define TEASE_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
+#define TEASE_VERSION_MINOR @PROJECT_VERSION_MINOR@
+#define TEASE_VERSION_PATCH @PROJECT_VERSION_PATCH@
+#define TEASE_VERSION       TEASE_VERSION_ENCODE(TEASE_VERSION_MAJOR, TEASE_VERSION_MINOR, TEASE_VERSION_PATCH)
+#define TEASE_VERSION_STR   "@PROJECT_VERSION@"
+
+/**********************************
  * Deprecations warnings
  *********************************/
-#define TEASE_DEPREC              [[deprecated]]          /**< Use to mark a method as deprecated. \n\code{.cpp}TEASE_DEPREC void myOldFct(); \endcode */
+#define TEASE_DEPREC              [[deprecated]]            /**< Use to mark a method as deprecated. \n\code{.cpp}TEASE_DEPREC void myOldFct(); \endcode */
 #define TEASE_DEPREC_X(reason)    [[deprecated(reason)]] 	/**< Use to mark a method as deprecated and specify a reason. \n\code{.cpp}TEASE_DEPREC_X("Use myNewFct() instead") void myOldFunc(); \endcode */
 
 /**********************************

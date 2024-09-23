@@ -1,10 +1,11 @@
-#include "transfermanager.h"
+#include "transferease/transfermanager.h"
 
 #include <curl/curl.h>
 #include <future>
 #include <mutex>
 
-#include "logs/logmanager.h"
+#include "transferease/logs/logmanager.h"
+
 #include "net/handle.h"
 #include "tools/stringhelper.h"
 
