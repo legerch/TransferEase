@@ -3,8 +3,8 @@
 *.user
 
 # Doc generation
-html/
-latex/
+api-internal/
+api-public/
 
 # Binaries
 build/
