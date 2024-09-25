@@ -143,7 +143,7 @@ private:
     void cleanHandles();
     void cleanRequests();
 
-    void configureHandleDl(CURL *handle, Request *req);
+    void configureHandle(Request::TypeTransfer typeTransfer, CURL *handle, Request *req);
 
 private:
     static size_t curlCbWrite(char *ptr, size_t size, size_t nmemb, void *userdata);
@@ -292,7 +292,7 @@ bool TransferManager::Impl::downloadPrepare()
         }
 
         // Configure it
-        configureHandleDl(handle, req.get());
+        configureHandle(typeTransfer, handle, req.get());
         curl_multi_add_handle(m_handleMulti, handle);
     }
 
@@ -376,11 +376,7 @@ TransferManager::IdError TransferManager::Impl::manageStatus(Request::TypeTransf
         curl_multi_remove_handle(m_handleMulti, handle);
         curl_easy_reset(handle);
 
-        switch(typeTransfer){
-            case Request::TRANSFER_DOWNLOAD: configureHandleDl(handle, req); break;
-            default: break;
-        }
-
+        configureHandle(typeTransfer, handle, req);
         curl_multi_add_handle(m_handleMulti, handle);
     }
 
@@ -433,7 +429,7 @@ void TransferManager::Impl::cleanRequests()
     m_listReqs.clear();
 }
 
-void TransferManager::Impl::configureHandleDl(CURL *handle, Request *req)
+void TransferManager::Impl::configureHandle(Request::TypeTransfer typeTransfer, CURL *handle, Request *req)
 {
     /* URL informations */
     const Url &url = req->getUrl();
@@ -460,9 +456,27 @@ void TransferManager::Impl::configureHandleDl(CURL *handle, Request *req)
     /* Request datas */
     curl_easy_setopt(handle, CURLOPT_PRIVATE, req);
 
-    /* Write callback */
-    curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, curlCbWrite);
-    curl_easy_setopt(handle, CURLOPT_WRITEDATA, req);
+    /* Manage configurations options related to the transfer type */
+    switch(typeTransfer)
+    {
+        case Request::TRANSFER_DOWNLOAD:{
+            // Manage write callbacks
+            curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, curlCbWrite);
+            curl_easy_setopt(handle, CURLOPT_WRITEDATA, req);
+        }break;
+
+        case Request::TRANSFER_UPLOAD:{
+            // Manage upload configuration
+            curl_easy_setopt(handle, CURLOPT_UPLOAD, 1L);
+            curl_easy_setopt(handle, CURLOPT_INFILESIZE_LARGE, static_cast<curl_off_t>(req->getData().getSize()));
+
+            // Manage read callbacks
+            curl_easy_setopt(handle, CURLOPT_READFUNCTION, curlCbRead);
+            curl_easy_setopt(handle, CURLOPT_READDATA, req);
+        }break;
+
+        default: break;
+    }
 
     /* Progress callback */
     curl_easy_setopt(handle, CURLOPT_XFERINFOFUNCTION, curlCbProgress);
