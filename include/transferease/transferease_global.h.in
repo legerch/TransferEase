@@ -78,6 +78,12 @@
 #endif
 
 /**********************************
+ * Variables attributes
+ *********************************/
+#define TEASE_VAR_MAYBE_UNUSED      [[maybe_unused]]
+#define TEASE_VAR_UNUSED            TEASE_VAR_MAYBE_UNUSED
+
+/**********************************
  * Classes behaviours
  *********************************/
 #define TEASE_DISABLE_COPY(Class) \

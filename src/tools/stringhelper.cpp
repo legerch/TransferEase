@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <locale>
 
-#include "transferease/logs/logmanager.h"
+#include "transferease/logs/abstractlogger.h"
 
 /*****************************/
 /* Class documentations      */

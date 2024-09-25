@@ -1,6 +1,6 @@
 #include "transferease/net/bytesarray.h"
 
-#include "transferease/logs/logmanager.h"
+#include "transferease/logs/abstractlogger.h"
 
 #include "tools/filesystemhelper.h"
 #include "tools/stringhelper.h"

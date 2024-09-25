@@ -4,7 +4,7 @@
 #include <future>
 #include <mutex>
 
-#include "transferease/logs/logmanager.h"
+#include "transferease/logs/abstractlogger.h"
 
 #include "net/handle.h"
 #include "tools/stringhelper.h"

@@ -3,7 +3,7 @@
 #include <regex>
 #include <unordered_map>
 
-#include "transferease/logs/logmanager.h"
+#include "transferease/logs/abstractlogger.h"
 
 #include "tools/stringhelper.h"
 

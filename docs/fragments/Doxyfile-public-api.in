@@ -15,9 +15,7 @@
 INPUT                   =   README.md \
                             include \
                             \
-                            src/logs/ilogger.cpp \
-                            src/logs/logcontext.cpp \
-                            src/logs/logmanager.cpp \
+                            src/logs/abstractlogger.cpp \
                             \
                             src/net/bytesarray.cpp \
                             src/net/request.cpp \

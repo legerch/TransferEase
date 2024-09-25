@@ -1,6 +1,6 @@
 #include "filesystemhelper.h"
 
-#include "transferease/logs/logmanager.h"
+#include "transferease/logs/abstractlogger.h"
 
 #include "stringhelper.h"
 

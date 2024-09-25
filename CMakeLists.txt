@@ -52,9 +52,7 @@ configure_file("${PROJECT_FILE_GLOBAL}.in" "${PROJECT_FILE_GLOBAL}")
 ## Set library files
 ### Public interface
 set(PROJECT_HEADERS_PUBLIC
-    logs/ilogger.h
-    logs/logcontext.h
-    logs/logmanager.h
+    logs/abstractlogger.h
 
     net/bytesarray.h
     net/request.h
@@ -74,7 +72,7 @@ set(PROJECT_HEADERS_PRIVATE
 list(TRANSFORM PROJECT_HEADERS_PRIVATE PREPEND "${PROJECT_DIR_PRIV_SOURCES}/")
 
 set(PROJECT_SOURCES
-    logs/logmanager.cpp
+    logs/abstractlogger.cpp
 
     net/bytesarray.cpp
     net/handle.cpp

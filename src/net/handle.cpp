@@ -2,7 +2,7 @@
 
 #include <curl/curl.h>
 
-#include "transferease/logs/logmanager.h"
+#include "transferease/logs/abstractlogger.h"
 
 #include "tools/stringhelper.h"
 
