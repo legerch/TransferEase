@@ -130,20 +130,20 @@ public:
 public:
     void init();
 
-    void jobDownload();
+    IdError jobPrepare(Request::TypeTransfer typeTransfer, const Request::List &listReqs);
+    void jobPerform();
 
 private:
-    bool downloadPrepare();
-
+    bool transferPrepare();
     bool performTransfer(IdError &idErr);
-    void updateProgress(Request::TypeTransfer typeTransfer);
-    IdError manageStatus(Request::TypeTransfer typeTransfer, int &counterReqsDone);
+    void updateProgress();
+    IdError manageStatus(int &counterReqsDone);
     bool errorAllowRetry(CURLcode curlErr, IdError &idErr);
 
     void cleanHandles();
     void cleanRequests();
 
-    void configureHandle(Request::TypeTransfer typeTransfer, CURL *handle, Request *req);
+    void configureHandle(CURL *handle, Request *req);
 
 private:
     static size_t curlCbWrite(char *ptr, size_t size, size_t nmemb, void *userdata);
@@ -159,6 +159,7 @@ private:
 public:
     CURLM* m_handleMulti = nullptr;
 
+    Request::TypeTransfer m_typeTransfer;
     Request::List m_listReqs;
 
     std::string m_username;
@@ -220,18 +221,67 @@ void TransferManager::Impl::init()
     m_parent->setCbFailed(defaultCbFailed);
 }
 
-void TransferManager::Impl::jobDownload()
+TransferManager::IdError TransferManager::Impl::jobPrepare(Request::TypeTransfer typeTransfer, const Request::List &listReqs)
+{
+    /* Verify that a transfer is not already running */
+    if(m_parent->transferIsInProgress()){
+        TEASE_LOG_ERROR("Unable to start download, transfer already in progress");
+        return ERR_BUSY;
+    }
+
+    /* Verify that list is not empty */
+    if(listReqs.empty()){
+        TEASE_LOG_ERROR("List of requests is empty, no download process to perform");
+        return ERR_INVALID_REQUEST;
+    }
+
+    /* Verify requests validity */
+    for(const auto &req : listReqs){
+        // Do all requests are expected transfer type ?
+        if(req->getTypeTransfer() != typeTransfer){
+            const std::string err = StringHelper::format("Receive request with a transfer type different than expected [type-req: %d, type-exp: %d]", req->getTypeTransfer(), typeTransfer);
+            TEASE_LOG_ERROR(err);
+            return ERR_INVALID_REQUEST;
+        }
+
+        // Do URL is valid ?
+        const Url &url = req->getUrl();
+        if(!url.isValid()){
+            const std::string err = StringHelper::format("Receive invalid URL [id-scheme: %d, host: %s, path: %s]", url.getIdScheme(), url.getHost().c_str(), url.getPath().c_str());
+            TEASE_LOG_ERROR(err);
+            return ERR_INVALID_REQUEST;
+        }
+
+        // Verify that datas are not empty for upload transfer
+        if(typeTransfer == Request::TRANSFER_UPLOAD){
+            const BytesArray &data = req->getData();
+            if(data.isEmpty()){
+                const std::string err = StringHelper::format("Receive empty data request for upload [id-scheme: %d, host: %s, path: %s]", url.getIdScheme(), url.getHost().c_str(), url.getPath().c_str());
+                TEASE_LOG_ERROR(err);
+                return ERR_INVALID_REQUEST;
+            }
+        }
+    }
+
+    /* Register requests */
+    m_typeTransfer = typeTransfer;
+    m_listReqs = listReqs;
+
+    return ERR_NO_ERROR;
+}
+
+void TransferManager::Impl::jobPerform()
 {
     const int nbReqsTodo = m_listReqs.size();
     int nbReqsDone = 0;
 
     IdError failureStatus = ERR_NO_ERROR;
 
-    /* Inform that download is started */
-    m_cbStarted(Request::TRANSFER_DOWNLOAD);
+    /* Inform that transfer is started */
+    m_cbStarted(m_typeTransfer);
 
-    /* Perform download preparation */
-    bool succeed = downloadPrepare();
+    /* Perform transfer preparation */
+    bool succeed = transferPrepare();
     if(!succeed){
         failureStatus = ERR_INTERNAL;
         goto stat_clean;
@@ -243,7 +293,7 @@ void TransferManager::Impl::jobDownload()
         goto stat_clean;
     }
 
-    /* Perform download */
+    /* Perform transfer */
     while(nbReqsDone < nbReqsTodo){
         // Perform polling
         curl_multi_wait(m_handleMulti, nullptr, 0, 1000, nullptr);
@@ -253,10 +303,10 @@ void TransferManager::Impl::jobDownload()
         }
 
         // Update progress
-        updateProgress(Request::TRANSFER_DOWNLOAD);
+        updateProgress();
 
         // Manage status
-        failureStatus = manageStatus(Request::TRANSFER_DOWNLOAD, nbReqsDone);
+        failureStatus = manageStatus(nbReqsDone);
         if(failureStatus != ERR_NO_ERROR){
             goto stat_clean;
         }
@@ -269,13 +319,13 @@ stat_clean:
 
     /* Inform user about transfer status */
     if(failureStatus == ERR_NO_ERROR){
-        m_cbCompleted(Request::TRANSFER_DOWNLOAD);
+        m_cbCompleted(m_typeTransfer);
     }else{
-        m_cbFailed(Request::TRANSFER_DOWNLOAD, failureStatus);
+        m_cbFailed(m_typeTransfer, failureStatus);
     }
 }
 
-bool TransferManager::Impl::downloadPrepare()
+bool TransferManager::Impl::transferPrepare()
 {
     Locker locker(m_mutex);
 
@@ -292,7 +342,7 @@ bool TransferManager::Impl::downloadPrepare()
         }
 
         // Configure it
-        configureHandle(typeTransfer, handle, req.get());
+        configureHandle(handle, req.get());
         curl_multi_add_handle(m_handleMulti, handle);
     }
 
@@ -315,7 +365,7 @@ bool TransferManager::Impl::performTransfer(IdError &idErr)
     return true;
 }
 
-void TransferManager::Impl::updateProgress(Request::TypeTransfer typeTransfer)
+void TransferManager::Impl::updateProgress()
 {
     /* Calculate list progress */
     size_t sizeTotal = 0, sizeCurrent = 0;
@@ -325,10 +375,10 @@ void TransferManager::Impl::updateProgress(Request::TypeTransfer typeTransfer)
     }
 
     /* Inform user */
-    m_cbProgress(typeTransfer, sizeTotal, sizeCurrent);
+    m_cbProgress(m_typeTransfer, sizeTotal, sizeCurrent);
 }
 
-TransferManager::IdError TransferManager::Impl::manageStatus(Request::TypeTransfer typeTransfer, int &counterReqsDone)
+TransferManager::IdError TransferManager::Impl::manageStatus(int &counterReqsDone)
 {
     IdError idErr = ERR_NO_ERROR;
     CURLMsg *msg = nullptr;
@@ -376,7 +426,7 @@ TransferManager::IdError TransferManager::Impl::manageStatus(Request::TypeTransf
         curl_multi_remove_handle(m_handleMulti, handle);
         curl_easy_reset(handle);
 
-        configureHandle(typeTransfer, handle, req);
+        configureHandle(handle, req);
         curl_multi_add_handle(m_handleMulti, handle);
     }
 
@@ -429,7 +479,7 @@ void TransferManager::Impl::cleanRequests()
     m_listReqs.clear();
 }
 
-void TransferManager::Impl::configureHandle(Request::TypeTransfer typeTransfer, CURL *handle, Request *req)
+void TransferManager::Impl::configureHandle(CURL *handle, Request *req)
 {
     /* URL informations */
     const Url &url = req->getUrl();
@@ -457,7 +507,7 @@ void TransferManager::Impl::configureHandle(Request::TypeTransfer typeTransfer, 
     curl_easy_setopt(handle, CURLOPT_PRIVATE, req);
 
     /* Manage configurations options related to the transfer type */
-    switch(typeTransfer)
+    switch(m_typeTransfer)
     {
         case Request::TRANSFER_DOWNLOAD:{
             // Manage write callbacks
@@ -597,38 +647,14 @@ TransferManager::~TransferManager() = default;
  */
 TransferManager::IdError TransferManager::startDownload(const Request::List &listReqs)
 {
-    /* Verify that a transfer is not already running */
-    if(transferIsInProgress()){
-        TEASE_LOG_ERROR("Unable to start download, transfer already in progress");
-        return ERR_BUSY;
+    /* Perform pre-job verifications */
+    const IdError idErr = d_ptr->jobPrepare(Request::TRANSFER_DOWNLOAD, listReqs);
+    if(idErr != ERR_NO_ERROR){
+        return idErr;
     }
-
-    /* Verify that list is not empty */
-    if(listReqs.empty()){
-        TEASE_LOG_ERROR("List of requests is empty, no download process to perform");
-        return ERR_INVALID_REQUEST;
-    }
-
-    /* Verify requests validity */
-    for(const auto &req : listReqs){
-        if(req->getTypeTransfer() != Request::TRANSFER_DOWNLOAD){
-            TEASE_LOG_ERROR("Receive request with a transfer type different than download, not allowed when trying to perform download");
-            return ERR_INVALID_REQUEST;
-        }
-
-        const Url &url = req->getUrl();
-        if(!url.isValid()){
-            const std::string err = StringHelper::format("Receive invalid URL [id-scheme: %d, host: %s, path: %s]", url.getIdScheme(), url.getHost().c_str(), url.getPath().c_str());
-            TEASE_LOG_ERROR(err);
-            return ERR_INVALID_REQUEST;
-        }
-    }
-
-    /* Register requests */
-    d_ptr->m_listReqs = listReqs;
 
     /* Start download process */
-    d_ptr->m_threadTransfer = std::async(std::launch::async, &Impl::jobDownload, d_ptr.get());
+    d_ptr->m_threadTransfer = std::async(std::launch::async, &Impl::jobPerform, d_ptr.get());
 
     return ERR_NO_ERROR;
 }
