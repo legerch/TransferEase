@@ -643,7 +643,10 @@ TransferManager::~TransferManager() = default;
  *
  * \return
  * Returns \c TransferManager::ERR_NO_ERROR if download succeed to be prepared. \n
- * This method will return \c TransferManager::ERR_BUSY error if called from a callback.
+ * This method will return \c TransferManager::ERR_BUSY error if a transfer is already
+ * running or if called from a callback.
+ *
+ * \sa startUpload()
  */
 TransferManager::IdError TransferManager::startDownload(const Request::List &listReqs)
 {
@@ -654,6 +657,42 @@ TransferManager::IdError TransferManager::startDownload(const Request::List &lis
     }
 
     /* Start download process */
+    d_ptr->m_threadTransfer = std::async(std::launch::async, &Impl::jobPerform, d_ptr.get());
+
+    return ERR_NO_ERROR;
+}
+
+/*!
+ * \brief Use to start upload list of requests
+ *
+ * \param[in, out] listReqs
+ * List of requests to upload. \n
+ * This argument is a list of request pointers, those will be directly
+ * read in order to upload datas, so pointers must remains valid. \n
+ * Once transfer is finished, user can still use request content.
+ *
+ * \note
+ * This method is \em thread-safe
+ * \note
+ * This method is asynchronous, so please use dedicated callbacks
+ * to manage transfer status.
+ *
+ * \return
+ * Returns \c TransferManager::ERR_NO_ERROR if upload succeed to be prepared. \n
+ * This method will return \c TransferManager::ERR_BUSY error if a transfer is already
+ * running or if called from a callback.
+ *
+ * \sa startDownload()
+ */
+TransferManager::IdError TransferManager::startUpload(const Request::List &listReqs)
+{
+    /* Perform pre-job verifications */
+    const IdError idErr = d_ptr->jobPrepare(Request::TRANSFER_UPLOAD, listReqs);
+    if(idErr != ERR_NO_ERROR){
+        return idErr;
+    }
+
+    /* Start upload process */
     d_ptr->m_threadTransfer = std::async(std::launch::async, &Impl::jobPerform, d_ptr.get());
 
     return ERR_NO_ERROR;

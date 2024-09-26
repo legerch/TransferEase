@@ -47,6 +47,7 @@ public:
 
 public:
     IdError startDownload(const Request::List &listReqs);
+    IdError startUpload(const Request::List &listReqs);
     bool transferIsInProgress() const;
 
     int getNbMaxTrials() const;

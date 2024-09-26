@@ -47,6 +47,7 @@ public:
 
 public:
     size_t ioRead(char *buffer, size_t nbBytes);
+
     void ioSetSizeTotal(size_t size);
     void ioSetSizeCurrent(size_t size);
     void ioRegisterTry();
