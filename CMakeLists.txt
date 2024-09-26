@@ -58,6 +58,8 @@ set(PROJECT_HEADERS_PUBLIC
     net/request.h
     net/url.h
 
+    tools/enumflag.h
+
     transfermanager.h
 )
 list(TRANSFORM PROJECT_HEADERS_PUBLIC PREPEND "${PROJECT_DIR_PUBLIC_HEADERS}/")

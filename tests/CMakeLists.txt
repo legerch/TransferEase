@@ -35,6 +35,8 @@ set(PROJECT_SOURCES
 
     net/bytesarray_tests.cpp
     net/url_tests.cpp
+
+    tools/enumflag_tests.cpp
 )
 
 set(PROJECT_FILES ${PROJECT_HEADERS} ${PROJECT_SOURCES})
