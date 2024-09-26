@@ -83,6 +83,36 @@ TEST(EnumFlagTest, flagClear)
     EXPECT_TRUE(flag & FlagEnum::FE_FLAG_THREE);
 }
 
+TEST(EnumFlagTest, flagToString)
+{
+    /* Define list of strings only once */
+    static const std::unordered_map<FlagEnum, std::string> MAP_FLAG_ENUM_TO_STRING =
+    {
+        {FlagEnum::FE_FLAG_NONE, "none"},
+
+        {FlagEnum::FE_FLAG_ONE, "one"},
+        {FlagEnum::FE_FLAG_TWO, "two"},
+        {FlagEnum::FE_FLAG_THREE, "three"},
+        {FlagEnum::FE_FLAG_FOUR, "four"}
+    };
+
+    /* Perform tests */
+    FlagEnum flag = FlagEnum::FE_FLAG_NONE;
+    EXPECT_EQ("none", flagEnumToString(flag, MAP_FLAG_ENUM_TO_STRING, '|'));
+
+    flag |= FlagEnum::FE_FLAG_TWO;
+    EXPECT_EQ("two", flagEnumToString(flag, MAP_FLAG_ENUM_TO_STRING, '|'));
+
+    flag |= FlagEnum::FE_FLAG_FOUR;
+    EXPECT_EQ("two|four", flagEnumToString(flag, MAP_FLAG_ENUM_TO_STRING, '|'));
+
+    flag |= FlagEnum::FE_FLAG_ONE;
+    EXPECT_EQ("one|two|four", flagEnumToString(flag, MAP_FLAG_ENUM_TO_STRING, '|'));
+
+    flag &= ~FlagEnum::FE_FLAG_TWO;
+    EXPECT_EQ("one|four", flagEnumToString(flag, MAP_FLAG_ENUM_TO_STRING, '|'));
+}
+
 /*****************************/
 /* End                       */
 /*****************************/
