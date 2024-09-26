@@ -20,8 +20,8 @@
  * \details
  * This class will allow to easily perform download/upload
  * ressources from/to a remote. \n
- * A simple example used to download a list of request:
- * \include{lineno} requests-download.cpp
+ * A simple example used to download/upload a list of request:
+ * \include{lineno} transfer-usage.cpp
  *
  * \note
  * For a more \em real-world example, we can refer
@@ -39,6 +39,7 @@
  * - https://curl.se/libcurl/c/
  *
  * \sa startDownload()
+ * \sa tease::Url
  */
 
 /*****************************/

@@ -148,6 +148,8 @@ Url::Url() :
 /*!
  * \brief Create an URL from a string which will
  * be parsed
+ * \details
+ * See setUrl() for more details.
  *
  * \param[in] url
  * URL to parse. \n
@@ -185,7 +187,19 @@ void Url::clear()
 }
 
 /*!
- * \brief Url::setUrl
+ * \brief Use to set URL from a string
+ * \details
+ * This method will parse the provided string
+ * to URL format. Examples:
+ * \code{.cpp}
+ * url1.setUrl("https://example.com:8080/path/to/resource.zip");
+ * url2.setUrl("https://example.com/path/to/resource.zip");
+ * \endcode
+ * Properties of those URLs will be:
+ * - IdScheme: `Url::SCHEME_HTTPS`
+ * - Host: `example.com`
+ * - Port: \c 8080 for `url1` and `0` for `url2` (\c 0 simply means that we don't provide port info)
+ * - Path: `path/to/resource.zip`
  *
  * \param[in] url
  * URL to parse. \n
