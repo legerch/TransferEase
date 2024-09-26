@@ -16,5 +16,7 @@ INPUT                   =   README.md \
                             include \
                             src
 
+ENABLED_SECTIONS        =   INTERNAL
+
 HTML_OUTPUT             =   api-internal
 EXTRACT_LOCAL_CLASSES   =   YES

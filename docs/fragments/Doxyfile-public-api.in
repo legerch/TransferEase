@@ -23,5 +23,7 @@ INPUT                   =   README.md \
                             \
                             src/transfermanager.cpp
 
+EXCLUDE                 =   include/transferease/tools/enumflag.h
+
 HTML_OUTPUT             =   api-public
 EXTRACT_LOCAL_CLASSES   =   NO

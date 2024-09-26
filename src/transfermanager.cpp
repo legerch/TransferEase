@@ -167,6 +167,7 @@ public:
     int m_nbMaxTrials;
     long m_timeoutConnect;
     long m_timeoutTransfer;
+    FlagOption m_options;
 
     Thread m_threadTransfer;
     std::mutex m_mutex;
@@ -201,6 +202,7 @@ TransferManager::Impl::Impl(TransferManager *parent)
     m_nbMaxTrials = DEFAULT_NB_MAX_TRIALS;
     m_timeoutConnect = DEFAULT_TIMEOUT_CONNECT;
     m_timeoutTransfer = DEFAULT_TIMEOUT_TRANSFER;
+    m_options = FlagOption::OPT_NONE;
     m_parent = parent;
 }
 
@@ -485,6 +487,7 @@ void TransferManager::Impl::configureHandle(CURL *handle, Request *req)
     const Url &url = req->getUrl();
     curl_easy_setopt(handle, CURLOPT_URL, url.toString().c_str());
 
+    /* Manage protocols behaviours */
     switch(url.getIdScheme())
     {
         case Url::SCHEME_FTPS:{
@@ -523,6 +526,11 @@ void TransferManager::Impl::configureHandle(CURL *handle, Request *req)
             // Manage read callbacks
             curl_easy_setopt(handle, CURLOPT_READFUNCTION, curlCbRead);
             curl_easy_setopt(handle, CURLOPT_READDATA, req);
+
+            // Manage available options
+            if(m_options & FlagOption::OPT_FTP_CREATE_DIRS){
+                curl_easy_setopt(handle, CURLOPT_FTP_CREATE_MISSING_DIRS, CURLFTP_CREATE_DIR);
+            }
         }break;
 
         default: break;
@@ -776,6 +784,23 @@ long TransferManager::getTimeoutTransfer() const
 }
 
 /*!
+ * \brief Retrieve transfer options.
+ *
+ * \note
+ * This method is \em thread-safe
+ *
+ * \return
+ * Returns transfer options.
+ *
+ * \sa setOptions()
+ */
+TransferManager::FlagOption TransferManager::getOptions() const
+{
+    Impl::Locker locker(d_ptr->m_mutex);
+    return d_ptr->m_options;
+}
+
+/*!
  * \brief Use to set user informations
  * \details
  * Can be useful if server require authentication.
@@ -880,6 +905,24 @@ void TransferManager::setTimeoutTransfer(long timeout)
 }
 
 /*!
+ * \brief Use to set options of the transfer manager
+ *
+ * \param[in] options
+ * Option flag(s) to use. \n
+ * Default value is: \c TransferManager::OPT_NONE
+ *
+ * \note
+ * This method is \em thread-safe
+ *
+ * \sa getOptions()
+ */
+void TransferManager::setOptions(FlagOption options)
+{
+    Impl::Locker locker(d_ptr->m_mutex);
+    d_ptr->m_options = options;
+}
+
+/*!
  * \brief Use to set started transfer callback
  * \details
  * Default callback will simply log a message. \n
@@ -969,6 +1012,35 @@ void TransferManager::setCbFailed(CbFailed fct)
 double TransferManager::transferProgressToPercent(size_t transferTotal, size_t transferNow)
 {
     return (static_cast<double>(transferNow) / transferTotal) * 100.0;
+}
+
+/*!
+ * \brief Use to convert flags option to a string
+ *
+ * \param[in] options
+ * Options to convert to string
+ * \param[in] separator
+ * Character separator to use between each options
+ *
+ * \return
+ * Returns string of options. \n
+ * Example:
+ * \code{.cpp}
+ * const FlagOption options = (TransferManager::OPT_FTP_CREATE_DIRS | TransferManager::OPT_NOT_YET_IMPL)
+ * std::cout << TransferManager::flagOptionToStr(options, '|'); // Will display: "OPT_FTP_CREATE_DIRS|OPT_NOT_YET_IMPL"
+ * \endcode
+ */
+std::string TransferManager::flagOptionToStr(FlagOption options, char separator)
+{
+    /* Define string equivalent only once */
+    static const std::unordered_map<FlagOption, std::string> MAP_FLAG_OPT_TO_STR =
+    {
+        {FlagOption::OPT_NONE, "OPT_NONE"},
+        {FlagOption::OPT_NONE, "OPT_FTP_CREATE_DIRS"}
+    };
+
+    /* Convert flags to string */
+    return flagEnumToString(options, MAP_FLAG_OPT_TO_STR, separator);
 }
 
 /*****************************/
