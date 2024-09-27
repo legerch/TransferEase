@@ -39,8 +39,8 @@ public:
     Url();
     explicit Url(const std::string &url);
 
-    explicit Url(const Url &other);
-    explicit Url(Url &&other) noexcept;
+    Url(const Url &other);
+    Url(Url &&other) noexcept;
 
     ~Url();
 

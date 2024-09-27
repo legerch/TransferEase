@@ -32,8 +32,8 @@ public:
     explicit BytesArray(size_t size, Byte value);
     explicit BytesArray(const std::initializer_list<Byte> &args);
 
-    explicit BytesArray(const BytesArray &other);
-    explicit BytesArray(BytesArray &&other) noexcept;
+    BytesArray(const BytesArray &other);
+    BytesArray(BytesArray &&other) noexcept;
 
     ~BytesArray();
 
