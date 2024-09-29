@@ -111,6 +111,10 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 # Compile needed definitions
 target_compile_definitions(${PROJECT_NAME} PRIVATE TEASE_LIBRARY_BUILD)
 
+if(WIN32)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)
+endif()
+
 # Specify include directories
 target_include_directories(${PROJECT_NAME}
     PUBLIC
