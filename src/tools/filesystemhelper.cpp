@@ -4,7 +4,7 @@
 
 #include "stringhelper.h"
 
-std::filesystem::__cxx11::path tease::FileSystemHelper::getFilePathDir(const std::string &filepath)
+std::filesystem::path tease::FileSystemHelper::getFilePathDir(const std::string &filepath)
 {
     return std::filesystem::path(filepath).parent_path();
 }
