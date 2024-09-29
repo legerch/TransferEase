@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.19)
 
 # Set project properties
 set(PROJECT_NAME transferease-tests)
-set(PROJECT_VERSION_CPP_MIN 17)
+set(PROJECT_VERSION_CPP_MIN 20)
 
 # Set project configuration
 project(${PROJECT_NAME} LANGUAGES CXX)
@@ -13,7 +13,8 @@ project(${PROJECT_NAME} LANGUAGES CXX)
 # Set C++ standard to use
 if(DEFINED CMAKE_CXX_STANDARD)
     if(${CMAKE_CXX_STANDARD} LESS ${PROJECT_VERSION_CPP_MIN})
-        message(FATAL_ERROR "Project ${PROJECT_NAME} require at least C++ standard ${PROJECT_VERSION_CPP_MIN}")
+        #message(FATAL_ERROR "Project ${PROJECT_NAME} require at least C++ standard ${PROJECT_VERSION_CPP_MIN}")
+        set(CMAKE_CXX_STANDARD ${PROJECT_VERSION_CPP_MIN})
     endif()
 else()
     set(CMAKE_CXX_STANDARD ${PROJECT_VERSION_CPP_MIN})
