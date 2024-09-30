@@ -29,7 +29,7 @@ public:
         ERR_NO_ERROR = 0,       /**< Success return code, no error detected */
 
         ERR_INTERNAL,           /**< Internal error mainly due to underlying library, please refer to logs if this error is triggered */
-        ERR_INVALID_LOGIN,      /**< Login informations used where wrong */
+        ERR_INVALID_LOGIN,      /**< Login informations used were wrong */
         ERR_INVALID_REQUEST,    /**< Receive an invalid request : can be an unsupported protocol and a misformatted request */
         ERR_INVALID_SSL,        /**< Provided SSL informations are invalid */
         ERR_BUSY,               /**< Manager is already performing requests transfers */

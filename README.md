@@ -65,7 +65,7 @@ This library provide some **CMake** options:
 # 3. How to use
 ## 3.1. Usage
 
-Please refer to `TransferManager` class documentation for more details
+Please refer to `tease::TransferManager` class documentation for more details
 
 ## 3.2. Logs management
 
