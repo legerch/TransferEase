@@ -38,29 +38,29 @@ TEST(Semver, formatToString)
 
 TEST(Semver, parseFromStringValid)
 {
-    EXPECT_TRUE(Semver::fromString("02.10.04", '.').isValid());
-    EXPECT_TRUE(Semver::fromString("2.10.4", '.').isValid());
-    EXPECT_TRUE(Semver::fromString("2-10-4", '-').isValid());
+    EXPECT_TRUE(Semver("02.10.04", '.').isValid());
+    EXPECT_TRUE(Semver("2.10.4", '.').isValid());
+    EXPECT_TRUE(Semver("2-10-4", '-').isValid());
 
-    EXPECT_TRUE(Semver::fromString("2.10.4.366", '.').isValid());
+    EXPECT_TRUE(Semver("2.10.4.366", '.').isValid());
 }
 
 TEST(Semver, parseFromStringInvalid)
 {
-    EXPECT_FALSE(Semver::fromString("").isValid());
-    EXPECT_FALSE(Semver::fromString("anytext").isValid());
-    EXPECT_FALSE(Semver::fromString("2.text.36").isValid());
+    EXPECT_FALSE(Semver("", '.').isValid());
+    EXPECT_FALSE(Semver("anytext", '.').isValid());
+    EXPECT_FALSE(Semver("2.text.36", '.').isValid());
 
-    EXPECT_FALSE(Semver::fromString("2.10.4", '-').isValid());
-    EXPECT_FALSE(Semver::fromString("2-10-4", '.').isValid());
+    EXPECT_FALSE(Semver("2.10.4", '-').isValid());
+    EXPECT_FALSE(Semver("2-10-4", '.').isValid());
 
-    EXPECT_FALSE(Semver::fromString("2.10", '.').isValid());
+    EXPECT_FALSE(Semver("2.10", '.').isValid());
 }
 
 TEST(Semver, areEquals)
 {
-    EXPECT_EQ(Semver(2, 10, 4), Semver::fromString("2.10.4", '.'));
-    EXPECT_NE(Semver(2, 10, 5), Semver::fromString("2.10.4", '.'));
+    EXPECT_EQ(Semver(2, 10, 4), Semver("2.10.4", '.'));
+    EXPECT_NE(Semver(2, 10, 5), Semver("2.10.4", '.'));
 }
 
 TEST(Semver, isHigher)
