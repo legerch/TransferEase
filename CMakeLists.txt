@@ -60,6 +60,8 @@ set(PROJECT_HEADERS_PUBLIC
 
     tools/enumflag.h
 
+    version/semver.h
+
     transfermanager.h
 )
 list(TRANSFORM PROJECT_HEADERS_PUBLIC PREPEND "${PROJECT_DIR_PUBLIC_HEADERS}/")
@@ -83,6 +85,8 @@ set(PROJECT_SOURCES
 
     tools/filesystemhelper.cpp
     tools/stringhelper.cpp
+
+    version/semver.cpp
 
     transfermanager.cpp
 )

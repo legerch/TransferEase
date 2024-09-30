@@ -38,6 +38,8 @@ set(PROJECT_SOURCES
     net/url_tests.cpp
 
     tools/enumflag_tests.cpp
+
+    version/semver_tests.cpp
 )
 
 set(PROJECT_FILES ${PROJECT_HEADERS} ${PROJECT_SOURCES})

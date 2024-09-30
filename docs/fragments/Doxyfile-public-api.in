@@ -21,6 +21,8 @@ INPUT                   =   README.md \
                             src/net/request.cpp \
                             src/net/url.cpp \
                             \
+                            src/version/semver.cpp\
+                            \
                             src/transfermanager.cpp
 
 EXCLUDE                 =   include/transferease/tools/enumflag.h

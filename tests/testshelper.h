@@ -5,9 +5,11 @@
 
 #include "transferease/net/bytesarray.h"
 #include "transferease/net/url.h"
+#include "transferease/version/semver.h"
 
-using Url = tease::Url;
 using BytesArray = tease::BytesArray;
+using Semver = tease::Semver;
+using Url = tease::Url;
 
 class TestsHelper
 {
