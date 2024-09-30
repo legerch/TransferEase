@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 /*****************************/
 /* Namespace instructions    */
@@ -19,6 +20,8 @@ public:
     static std::string toUpper(const std::string &str);
 
     static int toInt(const std::string &str, int base = 10, bool *succeed = nullptr);
+
+    static std::vector<std::string> split(const std::string &str, const std::string &sep);
 
 public:
     template<typename ... Args>

@@ -124,6 +124,42 @@ int StringHelper::toInt(const std::string &str, int base, bool *succeed)
     return tmpInt;
 }
 
+
+/*!
+ * \brief Use to split a string into multiple substrings
+ * according to a delimiter
+ *
+ * \param[in] str
+ * Strint to split. \n
+ * If empty, returned list will be empty.
+ * \param[in] sep
+ * Separator to use, case is sensitive.
+ *
+ * \return
+ * Return list of substrings
+ */
+std::vector<std::string> StringHelper::split(const std::string &str, const std::string &sep)
+{
+    std::vector<std::string> listStr;
+    size_t index = 0;
+
+    /* Parse string according to delimiter */
+    size_t posFound = str.find(sep);
+    while(posFound != std::string::npos){
+        listStr.emplace_back(str.cbegin() + index, str.cbegin() + posFound);
+
+        index = posFound + sep.size();
+        posFound = str.find(sep, index);
+    }
+
+    /* Don't forget last element ! */
+    if(index != str.size()){
+        listStr.emplace_back(str.cbegin() + index, str.cend());
+    }
+
+    return listStr;
+}
+
 /*****************************/
 /* End namespace             */
 /*****************************/
