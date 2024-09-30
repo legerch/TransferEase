@@ -1,9 +1,50 @@
 #ifndef TEASE_GLOBAL_H
 #define TEASE_GLOBAL_H
 
+/*!
+ * \file transferease_global.h
+ */
+
+/**********************************
+ * Version management
+ *********************************/
+
+/*!
+ * \brief Use to perform compilation version comparisons
+ * \details
+ * For example:
+ * \code{.cpp}
+ * #if TEASE_VERSION >= TEASE_VERSION_ENCODE(1,0,0)
+ *     // Do stuff for version 1.0.0 or higher
+ * #else
+ *     // Do stuff for version 0.0.x
+ * #endif
+ * \endcode
+ * 
+ * \note
+ * Use those macros only for build time check,
+ * otherwise to display/manage library version
+ * at runtime, prefer to use static method
+ * \c tease::Semver::getLibraryVersion()
+ * 
+ * \sa tease::Semver::getLibraryVersion()
+ */
+#define TEASE_VERSION_ENCODE(major, minor, path)    ((major) * 10000 + (minor) * 100 + (patch))
+
+#define TEASE_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
+#define TEASE_VERSION_MINOR @PROJECT_VERSION_MINOR@
+#define TEASE_VERSION_PATCH @PROJECT_VERSION_PATCH@
+#define TEASE_VERSION       TEASE_VERSION_ENCODE(TEASE_VERSION_MAJOR, TEASE_VERSION_MINOR, TEASE_VERSION_PATCH)
+#define TEASE_VERSION_STR   "@PROJECT_VERSION@"
+
+/*!
+ * \cond INTERNAL
+ */
+
 /**********************************
  * Library management
  *********************************/
+
 #ifdef __GNUC__
 #   if defined(TEASE_LIBRARY_BUILD)
 #       define TEASE_EXPORT __attribute__((visibility("default")))
@@ -17,25 +58,6 @@
 #       define TEASE_EXPORT __declspec(dllimport)
 #   endif
 #endif
-
-/**********************************
- * Version management
- *********************************/
-#define TEASE_VERSION_ENCODE(major, minor, path)    ((major) * 10000 + (minor) * 100 + (patch)) /**< Use to perform compilation version comparisons. Example:
-                                                                                                    \code{.cpp}
-                                                                                                    #if TEASE_VERSION > TEASE_VERSION_ENCODE(1,0,0)
-                                                                                                        // Do stuff for version 1.0.0 or higher
-                                                                                                    #else
-                                                                                                        // Do stuff for version 0.0.x
-                                                                                                    #endif
-                                                                                                    \endcode
-                                                                                                */
-
-#define TEASE_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
-#define TEASE_VERSION_MINOR @PROJECT_VERSION_MINOR@
-#define TEASE_VERSION_PATCH @PROJECT_VERSION_PATCH@
-#define TEASE_VERSION       TEASE_VERSION_ENCODE(TEASE_VERSION_MAJOR, TEASE_VERSION_MINOR, TEASE_VERSION_PATCH)
-#define TEASE_VERSION_STR   "@PROJECT_VERSION@"
 
 /**********************************
  * Deprecations warnings
@@ -97,5 +119,9 @@
 #define TEASE_DISABLE_COPY_MOVE(Class) \
     TEASE_DISABLE_COPY(Class) \
     TEASE_DISABLE_MOVE(Class)
+
+/*!
+ * \endcond
+ */
 
 #endif // TEASE_GLOBAL_H

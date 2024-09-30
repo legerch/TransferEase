@@ -241,6 +241,11 @@ bool Semver::parseString(const std::string &version, char delimiter)
  * \brief Retrieve library semantic version at
  * runtime.
  *
+ * \note
+ * If compile time version check for library is needed,
+ * we can use macro \c TEASE_VERSION_ENCODE (defined
+ * inside \em transferease_global.h file)
+ *
  * \return
  * Return constant reference to semantic
  * version of the library

@@ -1,5 +1,11 @@
-- _//TODO: simple project description_
-- _//TODO: describe devlopment branch and main branch_
+C++ cross-platform library [TransferEase][tease-repo] which will provide methods to download/upload datas easily.
+
+> [!TIP]
+> Latest development/pull requests will be committed into `main` branch.  
+> Each stable release have their dedicated branch:
+> - `1.0.x`: branch `dev/1.0`
+> - `1.1.x`: branch `dev/1.1`
+> - etc...
 
 **Table of contents :**
 - [1. Requirements](#1-requirements)
@@ -9,9 +15,11 @@
   - [2.1. How to build](#21-how-to-build)
   - [2.2. CMake options](#22-cmake-options)
 - [3. How to use](#3-how-to-use)
-  - [Usage](#usage)
-  - [Logs management](#logs-management)
-  - [Library version](#library-version)
+  - [3.1. Usage](#31-usage)
+  - [3.2. Logs management](#32-logs-management)
+  - [3.3. Library version](#33-library-version)
+    - [3.3.1. Compilation time](#331-compilation-time)
+    - [3.3.2. Runtime](#332-runtime)
 - [4. Library details](#4-library-details)
   - [4.1. Implementation](#41-implementation)
   - [4.2. Known issues](#42-known-issues)
@@ -30,6 +38,7 @@ Below, list of required dependencies:
 
 | Dependencies | VCPKG package | Comments |
 |:-:|:-:|:-:|
+| [libcurl][libcurl-home] | `curl` | / |
 | [Google Tests][gtest-repo] | `gtest` | Only needed to run unit-tests |
 
 > Dependency manager [VCPKG][vcpkg-tutorial] is not mandatory, this is only a note to be able to list needed packages
@@ -54,14 +63,36 @@ This library provide some **CMake** options:
 - `TEASE_BUILD_TESTS`: Use to enable/disable unit-tests of the library. **Default value:** `ON`.
 
 # 3. How to use
-## Usage
-- _//TODO: Describe how to use library_
+## 3.1. Usage
 
-## Logs management
-- _//TODO: virtual logger description_
+Please refer to `TransferManager` class documentation for more details
 
-## Library version
-- _//TODO: way to retrieve library version_
+## 3.2. Logs management
+
+This library use a _virtual logger_ (based on [this implementation][virtual-log-repo]) in order to let users of the library use their own log management mechanism. By default, no logs will be printed. To enable library log usage, caller must provide a class inheriting
+from `tease::ILogger` interface.  
+More details on how to use this log interface can be found inside [abstract logger repository][virtual-log-repo]
+
+## 3.3. Library version
+### 3.3.1. Compilation time
+
+In order to easily check at compilation time library version (to manage compatibility between multiple versions for example), macro `TEASE_VERSION_ENCODE` (defined inside _transferease_global.h_ file) can be used:
+```cpp
+#if TEASE_VERSION >= TEASE_VERSION_ENCODE(1,0,0)
+    // Do stuff for version 1.0.0 or higher
+#else
+    // Do stuff for version 0.0.x
+#endif
+```
+
+### 3.3.2. Runtime
+
+Since library header used during final application build could differ from the **actual** library version, it is recommended to use the static method:
+```cpp
+#include "transferease/version/semver.h"
+
+const Semver &teaseSemver = tease::Semver::getLibraryVersion();
+```
 
 # 4. Library details
 ## 4.1. Implementation
@@ -113,7 +144,10 @@ This library is licensed under [MIT license][repo-license].
 <!-- External links -->
 [doxygen-official]: https://www.doxygen.nl/index.html
 [gtest-repo]: https://github.com/google/googletest
+[libcurl-home]: https://curl.se/libcurl/
 [pimpl-doc]: https://en.cppreference.com/w/cpp/language/pimpl
 [semver-home]: https://semver.org
+[tease-repo]: https://github.com/legerch/TransferEase
+[virtual-log-repo]: https://github.com/legerch/AbstractLogger
 
 [vcpkg-tutorial]: https://github.com/legerch/develop-memo/tree/master/Toolchains/Build%20systems/VCPKG
