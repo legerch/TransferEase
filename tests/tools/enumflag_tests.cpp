@@ -21,7 +21,7 @@ enum class FlagEnum : std::uint8_t
 };
 
 template<>
-struct enable_bitmask_operators<FlagEnum>{
+struct tease_enable_flags<FlagEnum>{
     static constexpr bool enable = true;
 };
 

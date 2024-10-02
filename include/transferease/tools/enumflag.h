@@ -7,13 +7,13 @@
 #include <type_traits>
 
 template<typename E>
-struct enable_bitmask_operators
+struct tease_enable_flags
 {
     static constexpr bool enable = false; /* Define SFINAE */
 };
 
 template<typename E>
-typename std::enable_if<enable_bitmask_operators<E>::enable,E>::type
+typename std::enable_if<tease_enable_flags<E>::enable,E>::type
 operator|(E lhs,E rhs)
 {
     typedef typename std::underlying_type<E>::type underlying;
@@ -22,7 +22,7 @@ operator|(E lhs,E rhs)
 }
 
 template<typename E>
-typename std::enable_if<enable_bitmask_operators<E>::enable,bool>::type
+typename std::enable_if<tease_enable_flags<E>::enable,bool>::type
 operator&(E lhs,E rhs)
 {
     typedef typename std::underlying_type<E>::type underlying;
@@ -31,7 +31,7 @@ operator&(E lhs,E rhs)
 }
 
 template<typename E>
-typename std::enable_if<enable_bitmask_operators<E>::enable,E>::type
+typename std::enable_if<tease_enable_flags<E>::enable,E>::type
 operator^(E lhs,E rhs)
 {
     typedef typename std::underlying_type<E>::type underlying;
@@ -40,7 +40,7 @@ operator^(E lhs,E rhs)
 }
 
 template<typename E>
-typename std::enable_if<enable_bitmask_operators<E>::enable,E>::type
+typename std::enable_if<tease_enable_flags<E>::enable,E>::type
 operator~(E lhs)
 {
     typedef typename std::underlying_type<E>::type underlying;
@@ -49,7 +49,7 @@ operator~(E lhs)
 }
 
 template<typename E>
-typename std::enable_if<enable_bitmask_operators<E>::enable,E&>::type
+typename std::enable_if<tease_enable_flags<E>::enable,E&>::type
 operator|=(E& lhs,E rhs)
 {
     typedef typename std::underlying_type<E>::type underlying;
@@ -59,7 +59,7 @@ operator|=(E& lhs,E rhs)
 }
 
 template<typename E>
-typename std::enable_if<enable_bitmask_operators<E>::enable,E&>::type
+typename std::enable_if<tease_enable_flags<E>::enable,E&>::type
 operator&=(E& lhs,E rhs)
 {
     typedef typename std::underlying_type<E>::type underlying;
@@ -69,7 +69,7 @@ operator&=(E& lhs,E rhs)
 }
 
 template<typename E>
-typename std::enable_if<enable_bitmask_operators<E>::enable,E&>::type
+typename std::enable_if<tease_enable_flags<E>::enable,E&>::type
 operator^=(E& lhs,E rhs)
 {
     typedef typename std::underlying_type<E>::type underlying;
@@ -79,7 +79,7 @@ operator^=(E& lhs,E rhs)
 }
 
 template<typename E>
-typename std::enable_if<enable_bitmask_operators<E>::enable,std::string>::type
+typename std::enable_if<tease_enable_flags<E>::enable,std::string>::type
 flagEnumToString(E enumFlag, const std::unordered_map<E, std::string> &mapFlagToStr, const char separator = '|')
 {
     typedef typename std::underlying_type<E>::type underlying;

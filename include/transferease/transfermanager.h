@@ -112,7 +112,7 @@ private:
  */
 
 template<>
-struct enable_bitmask_operators<tease::TransferManager::FlagOption>{
+struct tease_enable_flags<tease::TransferManager::FlagOption>{
     static constexpr bool enable = true;
 };
 
