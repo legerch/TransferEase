@@ -45,7 +45,7 @@ public:
     const Byte& at(size_t index) const;
 
     std::string toString() const;
-    bool toFile(const std::string &pathFile);
+    bool toFile(const std::string &pathFile) const;
 
 public:
     void reserve(size_t size);

@@ -129,7 +129,7 @@ std::string BytesArray::toString() const
  * \sa setFromFile()
  * \sa toString()
  */
-bool BytesArray::toFile(const std::string &pathFile)
+bool BytesArray::toFile(const std::string &pathFile) const
 {
     /* Prepare output file */
     FileSystemHelper::createDirectories(FileSystemHelper::getFilePathDir(pathFile));
