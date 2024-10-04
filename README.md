@@ -1,4 +1,4 @@
-C++ cross-platform library [TransferEase][tease-repo] which will provide methods to download/upload datas easily.
+C++ cross-platform library [TransferEase][tease-repo] which provide methods to download/upload datas easily.
 
 > [!TIP]
 > Latest development/pull requests will be committed into `main` branch.  
@@ -113,7 +113,7 @@ Currently, only **uploaded** datas have a safeguard (when _loading data from fil
 > [!WARNING]
 > No safeguard currently set for **downloaded** datas !
 
-This issue will be taken care in a future release (via _streams/chunks management_) but I can only recommend to not use this library for now if downloaded files can be large.
+This issue will be taken care in a future release (via _streams/chunks management_) but I can only **recommend to not use** this library for now if downloaded files can be large.
 
 # 5. Documentation
 
@@ -137,10 +137,10 @@ doxygen ./Doxyfile-name
 
 # 6. License
 
-This library is licensed under [MIT license][repo-license].
+This library is licensed under **MIT license**.
 
 <!-- Links of this repository -->
-[repo-license]: LICENSE
+[repo-doc-web]: https://legerch.github.io/TransferEase/
 
 <!-- External links -->
 [doxygen-official]: https://www.doxygen.nl/index.html
