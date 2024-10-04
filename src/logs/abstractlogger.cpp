@@ -1,34 +1,15 @@
-#include "logmanager.h"
+#include "transferease/logs/abstractlogger.h"
 
 /*****************************/
 /* Class documentations      */
 /*****************************/
 
 /*****************************/
-/* Enum documentations       */
-/*****************************/
-
-/*****************************/
-/* Structure documentations  */
-/*****************************/
-
-/*****************************/
-/* Signals documentations    */
-/*****************************/
-
-/*****************************/
-/* Macro definitions         */
-/*****************************/
-
-/*****************************/
 /* Start namespace           */
 /*****************************/
 
-namespace tease{
-
-/*****************************/
-/* Constants definitions     */
-/*****************************/
+namespace tease
+{
 
 /*****************************/
 /* Static initialization     */
@@ -36,7 +17,8 @@ namespace tease{
 ILogger* LogManager::m_refLogger = nullptr;
 
 /*****************************/
-/* Functions implementations */
+/* Functions implementation  */
+/*        LogManager         */
 /*****************************/
 
 void LogManager::setLogger(ILogger *logger)
@@ -57,6 +39,7 @@ void LogManager::registerLog(ILogger::Level level, const char *filename, int lin
     /* Register log */
     m_refLogger->log(level, ctx, msg);
 }
+
 
 /*****************************/
 /* End namespace             */

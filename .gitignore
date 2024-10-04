@@ -3,11 +3,11 @@
 *.user
 
 # Doc generation
-html/
-latex/
+api-internal/
+api-public/
 
 # Binaries
 build/
 
 # Auto generated files
-config.h
+transferease_global.h
