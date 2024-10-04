@@ -97,7 +97,8 @@ const Semver &teaseSemver = tease::Semver::getLibraryVersion();
 # 4. Library details
 ## 4.1. Implementation
 
-This library use the [PImpl Idiom][pimpl-doc] in order to preserve _ABI compatibility_. So only **major** release (this project use the [semantic versioning][semver-home]) _should_ break the ABI.
+This library use the [PImpl Idiom][pimpl-doc-cpp] in order to preserve _ABI compatibility_ (_Qt wiki_ also have a [great tutorial on the PImpl idiom][pimpl-doc-qt]).  
+So only **major** release (this project use the [semantic versioning][semver-home]) _should_ break the ABI.
 
 ## 4.2. Known issues
 ### 4.2.1. Large files
@@ -145,7 +146,8 @@ This library is licensed under [MIT license][repo-license].
 [doxygen-official]: https://www.doxygen.nl/index.html
 [gtest-repo]: https://github.com/google/googletest
 [libcurl-home]: https://curl.se/libcurl/
-[pimpl-doc]: https://en.cppreference.com/w/cpp/language/pimpl
+[pimpl-doc-cpp]: https://en.cppreference.com/w/cpp/language/pimpl
+[pimpl-doc-qt]: https://wiki.qt.io/D-Pointer
 [semver-home]: https://semver.org
 [tease-repo]: https://github.com/legerch/TransferEase
 [virtual-log-repo]: https://github.com/legerch/AbstractLogger

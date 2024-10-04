@@ -9,6 +9,7 @@ namespace tease
 
 class TEASE_EXPORT Request final
 {
+    TEASE_DISABLE_COPY_MOVE(Request)
 
 public:
     /*!

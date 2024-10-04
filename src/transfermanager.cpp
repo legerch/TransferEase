@@ -731,6 +731,42 @@ bool TransferManager::transferIsInProgress() const
 }
 
 /*!
+ * \brief Retrieve login information currently
+ * used
+ *
+ * \note
+ * This method is \em thread-safe
+ *
+ * \return
+ * Returns user information login.
+ *
+ * \sa setUserInfos()
+ */
+const std::string& TransferManager::getUserLogin() const
+{
+    Impl::Locker locker(d_ptr->m_mutex);
+    return d_ptr->m_username;
+}
+
+/*!
+ * \brief Retrieve password information currently
+ * used
+ *
+ * \note
+ * This method is \em thread-safe
+ *
+ * \return
+ * Returns user information password.
+ *
+ * \sa setUserInfos()
+ */
+const std::string& TransferManager::getUserPasswd() const
+{
+    Impl::Locker locker(d_ptr->m_mutex);
+    return d_ptr->m_userpwd;
+}
+
+/*!
  * \brief Retrieve maximum number of trials
  * currently set.
  *
@@ -816,6 +852,8 @@ TransferManager::FlagOption TransferManager::getOptions() const
  * \note
  * If credentials are invalid, transfer will failed
  * with error TransferManager::ERR_INVALID_LOGIN
+ *
+ * \sa getUserLogin(), getUserPasswd()
  */
 void TransferManager::setUserInfos(const std::string &username, const std::string &passwd)
 {
@@ -1036,12 +1074,37 @@ std::string TransferManager::flagOptionToStr(FlagOption options, char separator)
     /* Define string equivalent only once */
     static const std::unordered_map<FlagOption, std::string> MAP_FLAG_OPT_TO_STR =
     {
-        {FlagOption::OPT_NONE, "OPT_NONE"},
-        {FlagOption::OPT_NONE, "OPT_FTP_CREATE_DIRS"}
+        {FlagOption::OPT_NONE,              "OPT_NONE"},
+        {FlagOption::OPT_FTP_CREATE_DIRS,   "OPT_FTP_CREATE_DIRS"}
     };
 
     /* Convert flags to string */
     return flagEnumToString(options, MAP_FLAG_OPT_TO_STR, separator);
+}
+
+const std::string &TransferManager::idErrorToStr(IdError idErr)
+{
+    /* Define string equivalent only once */
+    static const std::unordered_map<IdError, std::string> MAP_ID_ERR_TO_STR =
+    {
+        {IdError::ERR_NO_ERROR,             "ERR_NO_ERROR"},
+
+        {IdError::ERR_INTERNAL,             "ERR_INTERNAL"},
+        {IdError::ERR_INVALID_LOGIN,        "ERR_INVALID_LOGIN"},
+        {IdError::ERR_INVALID_REQUEST,      "ERR_INVALID_REQUEST"},
+        {IdError::ERR_INVALID_SSL,          "ERR_INVALID_SSL"},
+        {IdError::ERR_BUSY,                 "ERR_BUSY"},
+        {IdError::ERR_USER_ABORT,           "ERR_USER_ABORT"},
+        {IdError::ERR_MAX_TRIALS,           "ERR_MAX_TRIALS"},
+        {IdError::ERR_MEMORY_FULL_HOST,     "ERR_MEMORY_FULL_HOST"},
+        {IdError::ERR_MEMORY_FULL_REMOTE,   "ERR_MEMORY_FULL_REMOTE"},
+        {IdError::ERR_HOST_NOT_FOUND,       "ERR_HOST_NOT_FOUND"},
+        {IdError::ERR_HOST_REFUSED,         "ERR_HOST_REFUSED"},
+        {IdError::ERR_CONTENT_NOT_FOUND,    "ERR_CONTENT_NOT_FOUND"}
+    };
+
+    /* Return associated string */
+    return MAP_ID_ERR_TO_STR.at(idErr);
 }
 
 /*****************************/

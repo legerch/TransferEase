@@ -70,6 +70,8 @@ public:
     IdError startUpload(const Request::List &listReqs);
     bool transferIsInProgress() const;
 
+    const std::string& getUserLogin() const;
+    const std::string& getUserPasswd() const;
     int getNbMaxTrials() const;
     long getTimeoutConnection() const;
     long getTimeoutTransfer() const;
@@ -90,7 +92,9 @@ public:
 
 public:
     static double transferProgressToPercent(size_t transferTotal, size_t transferNow);
+
     static std::string flagOptionToStr(FlagOption options, char separator = '|');
+    static const std::string &idErrorToStr(IdError idErr);
 
 private:
     class Impl;
