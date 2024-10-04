@@ -389,6 +389,11 @@ TransferManager::IdError TransferManager::Impl::manageStatus(int &counterReqsDon
 
     /* Manage status of each request */
     while((msg = curl_multi_info_read(m_handleMulti, &nbMsgLeft))){
+        // Do we already have detected an error ?
+        if(idErr != ERR_NO_ERROR){
+            continue; // Curl doesn't allow to clean internal messages queue, so before returning because an error was detected, we have to iterate through every messages
+        }
+
         // Ignore request not finished
         if(msg->msg != CURLMSG_DONE){
             continue; // Read status of next request
@@ -404,7 +409,7 @@ TransferManager::IdError TransferManager::Impl::manageStatus(int &counterReqsDon
         // Do error allow us to a retry ? */
         const bool retryAllowed = errorAllowRetry(curlErr, idErr);
         if(!retryAllowed){
-            return idErr;
+            continue; // We have detected an error, so now we just need to clean remaining messages
         }
 
         // Retrieve current request informations
@@ -417,7 +422,8 @@ TransferManager::IdError TransferManager::Impl::manageStatus(int &counterReqsDon
             const std::string err = StringHelper::format("Reached maximum number of trials [url: %s, curl-err: %d]", req->getUrl().toString().c_str(), curlErr);
             TEASE_LOG_WARN(err);
 
-            return ERR_MAX_TRIALS;
+            idErr = ERR_MAX_TRIALS;
+            continue;
         }
 
         // Prepare new trial for current request
@@ -433,7 +439,7 @@ TransferManager::IdError TransferManager::Impl::manageStatus(int &counterReqsDon
         curl_multi_add_handle(m_handleMulti, handle);
     }
 
-    return ERR_NO_ERROR;
+    return idErr;
 }
 
 bool TransferManager::Impl::errorAllowRetry(CURLcode curlErr, IdError &idErr)
