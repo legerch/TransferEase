@@ -9,7 +9,7 @@
 namespace tease
 {
 
-class TEASE_EXPORT Url final
+class TEASE_EXPORT Url
 {
 
 public:
@@ -42,7 +42,7 @@ public:
     Url(const Url &other);
     Url(Url &&other) noexcept;
 
-    ~Url();
+    virtual ~Url();
 
 public:
     void clear();

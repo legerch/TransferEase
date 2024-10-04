@@ -16,7 +16,7 @@ namespace tease
 /*****************************/
 /* Class definitions         */
 /*****************************/
-class TEASE_EXPORT TransferManager final
+class TEASE_EXPORT TransferManager
 {
     TEASE_DISABLE_COPY_MOVE(TransferManager)
 
@@ -63,7 +63,7 @@ public:
 
 public:
     TransferManager();
-    ~TransferManager();
+    virtual ~TransferManager();
 
 public:
     IdError startDownload(const Request::List &listReqs);

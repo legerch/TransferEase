@@ -7,7 +7,7 @@
 namespace tease
 {
 
-class TEASE_EXPORT Request final
+class TEASE_EXPORT Request
 {
     TEASE_DISABLE_COPY_MOVE(Request)
 
@@ -29,7 +29,7 @@ public:
 
 public:
     Request();
-    ~Request();
+    virtual ~Request();
 
 public:
     void clear();

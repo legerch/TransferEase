@@ -38,7 +38,7 @@ public:
     Semver(const Semver &other);
     Semver(Semver &&other) noexcept;
 
-    ~Semver();
+    virtual ~Semver();
 
 public:
     void setField(Field idField, int value);

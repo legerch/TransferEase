@@ -11,7 +11,7 @@
 namespace tease
 {
 
-class TEASE_EXPORT BytesArray final
+class TEASE_EXPORT BytesArray
 {
 
 public:
@@ -35,7 +35,7 @@ public:
     BytesArray(const BytesArray &other);
     BytesArray(BytesArray &&other) noexcept;
 
-    ~BytesArray();
+    virtual ~BytesArray();
 
 public:
     bool isEmpty() const;
