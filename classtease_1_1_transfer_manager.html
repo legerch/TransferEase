@@ -132,7 +132,8 @@ Public Types</h2></td></tr>
 <tr class="memdesc:a753388dcb27fe9e8e642eb1c98125423"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of errors identifiers.  <a href="#a753388dcb27fe9e8e642eb1c98125423">More...</a><br /></td></tr>
 <tr class="separator:a753388dcb27fe9e8e642eb1c98125423"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05d743099d8c94756eaba0fd718be5b8" id="r_a05d743099d8c94756eaba0fd718be5b8"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a05d743099d8c94756eaba0fd718be5b8">FlagOption</a> : std::uint32_t { <a class="el" href="#a05d743099d8c94756eaba0fd718be5b8ac4483aa11fb5bdd6f185b0a716f200b9">OPT_NONE</a> = 0
-, <a class="el" href="#a05d743099d8c94756eaba0fd718be5b8a7c1d72c55d359a48d0d2d3d16fb6c57b">OPT_FTP_CREATE_DIRS</a> = 1 &lt;&lt; 0
+, <a class="el" href="#a05d743099d8c94756eaba0fd718be5b8afe9b8146554955f26775d173a40a4fad">OPT_VERBOSE</a> = 1 &lt;&lt; 0
+, <a class="el" href="#a05d743099d8c94756eaba0fd718be5b8a7c1d72c55d359a48d0d2d3d16fb6c57b">OPT_FTP_CREATE_DIRS</a> = 1 &lt;&lt; 1
  }</td></tr>
 <tr class="memdesc:a05d743099d8c94756eaba0fd718be5b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of available options.  <a href="#a05d743099d8c94756eaba0fd718be5b8">More...</a><br /></td></tr>
 <tr class="separator:a05d743099d8c94756eaba0fd718be5b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -518,7 +519,9 @@ A simple example used to download/upload a list of request: </p><div class="frag
 <table class="fieldtable">
 <tr><th colspan="3">Enumerator</th></tr><tr><td class="fieldname"><a id="a05d743099d8c94756eaba0fd718be5b8ac4483aa11fb5bdd6f185b0a716f200b9" name="a05d743099d8c94756eaba0fd718be5b8ac4483aa11fb5bdd6f185b0a716f200b9"></a>OPT_NONE&#160;</td><td class="fieldinit">0&#160;</td><td class="fielddoc"><p>No options defined, use this value to reset flags </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a05d743099d8c94756eaba0fd718be5b8a7c1d72c55d359a48d0d2d3d16fb6c57b" name="a05d743099d8c94756eaba0fd718be5b8a7c1d72c55d359a48d0d2d3d16fb6c57b"></a>OPT_FTP_CREATE_DIRS&#160;</td><td class="fieldinit">1 &lt;&lt; 0&#160;</td><td class="fielddoc"><p>When uploading ressource via FTP protocol, missing directories will be automatically created. <br  />
+<tr><td class="fieldname"><a id="a05d743099d8c94756eaba0fd718be5b8afe9b8146554955f26775d173a40a4fad" name="a05d743099d8c94756eaba0fd718be5b8afe9b8146554955f26775d173a40a4fad"></a>OPT_VERBOSE&#160;</td><td class="fieldinit">1 &lt;&lt; 0&#160;</td><td class="fielddoc"><p>Enable to provide a lot of verbose informations, you hardly ever want this enabled in production use, you almost always want this used when you debug/report problems. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a05d743099d8c94756eaba0fd718be5b8a7c1d72c55d359a48d0d2d3d16fb6c57b" name="a05d743099d8c94756eaba0fd718be5b8a7c1d72c55d359a48d0d2d3d16fb6c57b"></a>OPT_FTP_CREATE_DIRS&#160;</td><td class="fieldinit">1 &lt;&lt; 1&#160;</td><td class="fielddoc"><p>When uploading ressource via FTP protocol, missing directories will be automatically created. <br  />
  Note that this option will be ignored for any other protocol. </p>
 </td></tr>
 </table>
@@ -606,11 +609,12 @@ A simple example used to download/upload a list of request: </p><div class="frag
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns string of options. <br  />
-Example: <div class="fragment"><div class="line"><span class="keyword">const</span> <a class="code hl_enumeration" href="#a05d743099d8c94756eaba0fd718be5b8">FlagOption</a> options = (<a class="code hl_enumvalue" href="#a05d743099d8c94756eaba0fd718be5b8a7c1d72c55d359a48d0d2d3d16fb6c57b">TransferManager::OPT_FTP_CREATE_DIRS</a> | TransferManager::OPT_NOT_YET_IMPL)</div>
-<div class="line">std::cout &lt;&lt; <a class="code hl_function" href="#a3784de4ecf955ff81beea610bc1762a7">TransferManager::flagOptionToStr</a>(options, <span class="charliteral">&#39;|&#39;</span>); <span class="comment">// Will display: &quot;OPT_FTP_CREATE_DIRS|OPT_NOT_YET_IMPL&quot;</span></div>
+Example: <div class="fragment"><div class="line"><span class="keyword">const</span> <a class="code hl_enumeration" href="#a05d743099d8c94756eaba0fd718be5b8">FlagOption</a> options = (<a class="code hl_enumvalue" href="#a05d743099d8c94756eaba0fd718be5b8a7c1d72c55d359a48d0d2d3d16fb6c57b">TransferManager::OPT_FTP_CREATE_DIRS</a> | <a class="code hl_enumvalue" href="#a05d743099d8c94756eaba0fd718be5b8afe9b8146554955f26775d173a40a4fad">TransferManager::OPT_VERBOSE</a>)</div>
+<div class="line">std::cout &lt;&lt; <a class="code hl_function" href="#a3784de4ecf955ff81beea610bc1762a7">TransferManager::flagOptionToStr</a>(options, <span class="charliteral">&#39;|&#39;</span>); <span class="comment">// Will display: &quot;OPT_FTP_CREATE_DIRS|OPT_VERBOSE&quot;</span></div>
 <div class="ttc" id="aclasstease_1_1_transfer_manager_html_a05d743099d8c94756eaba0fd718be5b8"><div class="ttname"><a href="#a05d743099d8c94756eaba0fd718be5b8">tease::TransferManager::FlagOption</a></div><div class="ttdeci">FlagOption</div><div class="ttdoc">List of available options.</div><div class="ttdef"><b>Definition</b> transfermanager.h:52</div></div>
-<div class="ttc" id="aclasstease_1_1_transfer_manager_html_a05d743099d8c94756eaba0fd718be5b8a7c1d72c55d359a48d0d2d3d16fb6c57b"><div class="ttname"><a href="#a05d743099d8c94756eaba0fd718be5b8a7c1d72c55d359a48d0d2d3d16fb6c57b">tease::TransferManager::OPT_FTP_CREATE_DIRS</a></div><div class="ttdeci">@ OPT_FTP_CREATE_DIRS</div><div class="ttdef"><b>Definition</b> transfermanager.h:55</div></div>
-<div class="ttc" id="aclasstease_1_1_transfer_manager_html_a3784de4ecf955ff81beea610bc1762a7"><div class="ttname"><a href="#a3784de4ecf955ff81beea610bc1762a7">tease::TransferManager::flagOptionToStr</a></div><div class="ttdeci">static std::string flagOptionToStr(FlagOption options, char separator='|')</div><div class="ttdoc">Use to convert flags option to a string.</div><div class="ttdef"><b>Definition</b> transfermanager.cpp:1078</div></div>
+<div class="ttc" id="aclasstease_1_1_transfer_manager_html_a05d743099d8c94756eaba0fd718be5b8a7c1d72c55d359a48d0d2d3d16fb6c57b"><div class="ttname"><a href="#a05d743099d8c94756eaba0fd718be5b8a7c1d72c55d359a48d0d2d3d16fb6c57b">tease::TransferManager::OPT_FTP_CREATE_DIRS</a></div><div class="ttdeci">@ OPT_FTP_CREATE_DIRS</div><div class="ttdef"><b>Definition</b> transfermanager.h:56</div></div>
+<div class="ttc" id="aclasstease_1_1_transfer_manager_html_a05d743099d8c94756eaba0fd718be5b8afe9b8146554955f26775d173a40a4fad"><div class="ttname"><a href="#a05d743099d8c94756eaba0fd718be5b8afe9b8146554955f26775d173a40a4fad">tease::TransferManager::OPT_VERBOSE</a></div><div class="ttdeci">@ OPT_VERBOSE</div><div class="ttdef"><b>Definition</b> transfermanager.h:55</div></div>
+<div class="ttc" id="aclasstease_1_1_transfer_manager_html_a3784de4ecf955ff81beea610bc1762a7"><div class="ttname"><a href="#a3784de4ecf955ff81beea610bc1762a7">tease::TransferManager::flagOptionToStr</a></div><div class="ttdeci">static std::string flagOptionToStr(FlagOption options, char separator='|')</div><div class="ttdoc">Use to convert flags option to a string.</div><div class="ttdef"><b>Definition</b> transfermanager.cpp:1116</div></div>
 </div><!-- fragment --> </dd></dl>
 
 </div>
