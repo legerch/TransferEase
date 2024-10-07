@@ -150,6 +150,7 @@ private:
     static size_t curlCbWrite(char *ptr, size_t size, size_t nmemb, void *userdata);
     static size_t curlCbRead(char *buffer, size_t size, size_t nitems, void *userdata);
     static int curlCbProgress(void *clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow);
+    static int curlCbVerbose(CURL *handle, curl_infotype type, char *data, size_t size, void *userdata);
 
 private:
     static void defaultCbStarted(Request::TypeTransfer typeTransfer);
@@ -555,6 +556,12 @@ void TransferManager::Impl::configureHandle(CURL *handle, Request *req)
     // Minimum allowed speed (if transfer rate is below the limit for the configured timeout transfer, transfer will timeout)
     curl_easy_setopt(handle, CURLOPT_LOW_SPEED_LIMIT, MIN_SPEED_LIMIT);
     curl_easy_setopt(handle, CURLOPT_LOW_SPEED_TIME, m_timeoutTransfer);
+
+    /* Do we need to enable verbosity debug ? */
+    if(m_options & FlagOption::OPT_VERBOSE){
+        curl_easy_setopt(handle, CURLOPT_DEBUGFUNCTION, curlCbVerbose);
+        curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
+    }
 }
 
 size_t TransferManager::Impl::curlCbWrite(char *ptr, size_t size, size_t nmemb, void *userdata)
@@ -602,6 +609,37 @@ int TransferManager::Impl::curlCbProgress(void *clientp, curl_off_t dltotal, cur
     }
 
     return 0; // Return 0 to continue the transfer, non-zero to abort
+}
+
+int TransferManager::Impl::curlCbVerbose(CURL *handle, curl_infotype type, char *data, size_t size, TEASE_VAR_UNUSED void *userdata)
+{
+    /* Retrieve handle request */
+    Request *req = nullptr;
+    curl_easy_getinfo(handle, CURLINFO_PRIVATE, &req);
+
+    /* Prepare debug message according to data type */
+    std::string message;
+    switch(type)
+    {
+        case CURLINFO_DATA_IN:
+        case CURLINFO_DATA_OUT:{
+            message = StringHelper::format("binary data of %zu bytes", size);
+        }break;
+
+        case CURLINFO_SSL_DATA_IN:
+        case CURLINFO_SSL_DATA_OUT:{
+            message = StringHelper::format("SSL (binary) data of %zu bytes", size);
+        }break;
+
+        default:{
+            message = std::string(data, size);
+        }break;
+    }
+
+    const std::string fmtMess = StringHelper::format("Curl debug message [type: %d, message: '%s', url: '%s']", type, message.c_str(), req->getUrl().toString().c_str());
+    TEASE_LOG_DEBUG(fmtMess);
+
+    return 0;
 }
 
 void TransferManager::Impl::defaultCbStarted(Request::TypeTransfer typeTransfer)
@@ -1071,8 +1109,8 @@ double TransferManager::transferProgressToPercent(size_t transferTotal, size_t t
  * Returns string of options. \n
  * Example:
  * \code{.cpp}
- * const FlagOption options = (TransferManager::OPT_FTP_CREATE_DIRS | TransferManager::OPT_NOT_YET_IMPL)
- * std::cout << TransferManager::flagOptionToStr(options, '|'); // Will display: "OPT_FTP_CREATE_DIRS|OPT_NOT_YET_IMPL"
+ * const FlagOption options = (TransferManager::OPT_FTP_CREATE_DIRS | TransferManager::OPT_VERBOSE)
+ * std::cout << TransferManager::flagOptionToStr(options, '|'); // Will display: "OPT_FTP_CREATE_DIRS|OPT_VERBOSE"
  * \endcode
  */
 std::string TransferManager::flagOptionToStr(FlagOption options, char separator)

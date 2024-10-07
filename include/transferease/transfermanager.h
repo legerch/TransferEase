@@ -52,7 +52,8 @@ public:
     {
         OPT_NONE = 0,                   /**< No options defined, use this value to reset flags */
 
-        OPT_FTP_CREATE_DIRS = 1 << 0    /**< When uploading ressource via FTP protocol, missing directories will be automatically created. \n Note that this option will be ignored for any other protocol. */
+        OPT_VERBOSE         = 1 << 0,   /**< Enable to provide a lot of verbose informations, you hardly ever want this enabled in production use, you almost always want this used when you debug/report problems. */
+        OPT_FTP_CREATE_DIRS = 1 << 1    /**< When uploading ressource via FTP protocol, missing directories will be automatically created. \n Note that this option will be ignored for any other protocol. */
     };
 
 public:
