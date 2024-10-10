@@ -560,6 +560,7 @@ void TransferManager::Impl::configureHandle(CURL *handle, Request *req)
     /* Do we need to enable verbosity debug ? */
     if(m_options & FlagOption::OPT_VERBOSE){
         curl_easy_setopt(handle, CURLOPT_DEBUGFUNCTION, curlCbVerbose);
+        curl_easy_setopt(handle, CURLOPT_DEBUGDATA, req);
         curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
     }
 }
@@ -611,11 +612,10 @@ int TransferManager::Impl::curlCbProgress(void *clientp, curl_off_t dltotal, cur
     return 0; // Return 0 to continue the transfer, non-zero to abort
 }
 
-int TransferManager::Impl::curlCbVerbose(CURL *handle, curl_infotype type, char *data, size_t size, TEASE_VAR_UNUSED void *userdata)
+int TransferManager::Impl::curlCbVerbose(TEASE_VAR_UNUSED CURL *handle, curl_infotype type, char *data, size_t size, void *userdata)
 {
-    /* Retrieve handle request */
-    Request *req = nullptr;
-    curl_easy_getinfo(handle, CURLINFO_PRIVATE, &req);
+    /* Cast elements */
+    Request *req = static_cast<Request*>(userdata);
 
     /* Prepare debug message according to data type */
     std::string message;
