@@ -69,6 +69,7 @@ public:
 public:
     IdError startDownload(const Request::List &listReqs);
     IdError startUpload(const Request::List &listReqs);
+    void abortTransfer();
     bool transferIsInProgress() const;
 
     const std::string& getUserLogin() const;

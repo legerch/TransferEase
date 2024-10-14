@@ -56,6 +56,7 @@ public:
     size_t m_ioTotal;
     size_t m_ioCurrent;
     int m_ioNbTrials;
+    bool m_ioAbort;
 };
 
 /*****************************/
@@ -93,6 +94,7 @@ void Request::Impl::ioReset(bool resetNbTrials)
 
     if(resetNbTrials){
         m_ioNbTrials = 0;
+        m_ioAbort = false;
     }
 }
 
@@ -218,6 +220,11 @@ void Request::ioRegisterTry()
     ++d_ptr->m_ioNbTrials;
 }
 
+void Request::ioAbort()
+{
+    d_ptr->m_ioAbort = true;
+}
+
 void Request::ioReset()
 {
     d_ptr->ioReset(true);
@@ -236,6 +243,11 @@ size_t Request::ioGetSizeCurrent() const
 int Request::ioGetNbTrials() const
 {
     return d_ptr->m_ioNbTrials;
+}
+
+bool Request::ioIsAbort() const
+{
+    return d_ptr->m_ioAbort;
 }
 
 /*****************************/

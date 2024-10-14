@@ -52,11 +52,13 @@ public:
     void ioSetSizeTotal(size_t size);
     void ioSetSizeCurrent(size_t size);
     void ioRegisterTry();
+    void ioAbort();
     void ioReset();
 
     size_t ioGetSizeTotal() const;
     size_t ioGetSizeCurrent() const;
     int ioGetNbTrials() const;
+    bool ioIsAbort() const;
 
 private:
     class Impl;

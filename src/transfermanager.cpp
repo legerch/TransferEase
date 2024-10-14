@@ -461,6 +461,7 @@ bool TransferManager::Impl::errorAllowRetry(CURLcode curlErr, IdError &idErr)
         case CURLE_URL_MALFORMAT:           idErr = ERR_INVALID_REQUEST;    break;
         case CURLE_REMOTE_FILE_NOT_FOUND:   idErr = ERR_CONTENT_NOT_FOUND;  break;
         case CURLE_LOGIN_DENIED:            idErr = ERR_INVALID_LOGIN;      break;
+        case CURLE_ABORTED_BY_CALLBACK:     idErr = ERR_USER_ABORT;         break;
 
         default:{
             return true; // Any other errors allow to perform new try
@@ -610,7 +611,13 @@ int TransferManager::Impl::curlCbProgress(void *clientp, curl_off_t dltotal, cur
         default: break;
     }
 
-    return 0; // Return 0 to continue the transfer, non-zero to abort
+    /* Do we have to abort current transfer ? */
+    if(req->ioIsAbort()){
+        return 1;
+    }
+
+    /* Continue transfer by returning 0 */
+    return 0;
 }
 
 int TransferManager::Impl::curlCbVerbose(TEASE_VAR_UNUSED CURL *handle, curl_infotype type, char *data, size_t size, void *userdata)
@@ -701,6 +708,7 @@ TransferManager::~TransferManager() = default;
  * running or if called from a callback.
  *
  * \sa startUpload()
+ * \sa abortTransfer()
  */
 TransferManager::IdError TransferManager::startDownload(const Request::List &listReqs)
 {
@@ -737,6 +745,7 @@ TransferManager::IdError TransferManager::startDownload(const Request::List &lis
  * running or if called from a callback.
  *
  * \sa startDownload()
+ * \sa abortTransfer()
  */
 TransferManager::IdError TransferManager::startUpload(const Request::List &listReqs)
 {
@@ -750,6 +759,36 @@ TransferManager::IdError TransferManager::startUpload(const Request::List &listR
     d_ptr->m_threadTransfer = std::async(std::launch::async, &Impl::jobPerform, d_ptr.get());
 
     return ERR_NO_ERROR;
+}
+
+/*!
+ * \brief Use to abort current transfer
+ * \details
+ * This method will return directly, that don't mean that
+ * transfer has been aborted yet. \n
+ * Once transfer aborted, callback \c TransferManager::CbFailed will be
+ * called with error code \c TransferManager::ERR_USER_ABORT. \n
+ * Nothing will be perform if no transfer is currently running
+ *
+ * \note
+ * This method is \em thread-safe
+ * \note
+ * This method is asynchronous, so please use dedicated callbacks
+ * to manage transfer status.
+ *
+ * \sa startDownload(), startUpload()
+ */
+void TransferManager::abortTransfer()
+{
+    /* Verify that a transfer is currently running */
+    if(!transferIsInProgress()){
+        return;
+    }
+
+    /* Set abort related properties */
+    for(auto it = d_ptr->m_listReqs.begin(); it != d_ptr->m_listReqs.end(); ++it){
+        (*it)->ioAbort();
+    }
 }
 
 /*!
