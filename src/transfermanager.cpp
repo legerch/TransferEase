@@ -355,6 +355,7 @@ bool TransferManager::Impl::transferPrepare()
 
 bool TransferManager::Impl::performTransfer(IdError &idErr)
 {
+    Locker locker(m_mutex);
     int nbReqsRunning;
 
     CURLMcode curlErr = curl_multi_perform(m_handleMulti, &nbReqsRunning);
