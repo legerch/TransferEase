@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['build_0',['2.1. How to build',['../index.html#autotoc_md21-how-to-build',1,'']]],
-  ['bytesarray_1',['BytesArray',['../classtease_1_1_bytes_array.html',1,'tease']]]
+  ['aborttransfer_0',['abortTransfer',['../classtease_1_1_transfer_manager.html#a48808f416a3076958fcde0b05789274e',1,'tease::TransferManager']]]
 ];

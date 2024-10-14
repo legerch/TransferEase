@@ -1,29 +1,7 @@
 var searchData=
 [
-  ['scheme_5fftp_0',['SCHEME_FTP',['../classtease_1_1_url.html#ad69cd303ec35469d36c1f1e5a6e8e651aecc4987755f0d62a79d6f2c81f9e680f',1,'tease::Url']]],
-  ['scheme_5fftps_1',['SCHEME_FTPS',['../classtease_1_1_url.html#ad69cd303ec35469d36c1f1e5a6e8e651a8d3d897d64f50ade4823539b0e0ac999',1,'tease::Url']]],
-  ['scheme_5fhttp_2',['SCHEME_HTTP',['../classtease_1_1_url.html#ad69cd303ec35469d36c1f1e5a6e8e651a96aa9d02397e826232c8bb7460fbfb0c',1,'tease::Url']]],
-  ['scheme_5fhttps_3',['SCHEME_HTTPS',['../classtease_1_1_url.html#ad69cd303ec35469d36c1f1e5a6e8e651ab93c5375d313e13322f8e4e37d3f24d1',1,'tease::Url']]],
-  ['scheme_5fnb_5fsupported_4',['SCHEME_NB_SUPPORTED',['../classtease_1_1_url.html#ad69cd303ec35469d36c1f1e5a6e8e651a9049d24069a5ac1d49079805d595a2ae',1,'tease::Url']]],
-  ['scheme_5funk_5',['SCHEME_UNK',['../classtease_1_1_url.html#ad69cd303ec35469d36c1f1e5a6e8e651ad384816666a6160dc18824fca9f9fc14',1,'tease::Url']]],
-  ['semver_6',['Semver',['../classtease_1_1_semver.html',1,'tease::Semver'],['../classtease_1_1_semver.html#ae900ea17b862d33107a784e40fcf0e77',1,'tease::Semver::Semver()'],['../classtease_1_1_semver.html#a221a320e714b42c36e077b6163b6be0c',1,'tease::Semver::Semver(int major, int minor, int patch)'],['../classtease_1_1_semver.html#a1029624c0a152f828072acaa7cfcd6bd',1,'tease::Semver::Semver(const std::string &amp;semver, char delimiter)'],['../classtease_1_1_semver.html#ae6f42ac4736bee98d80d693989092a1a',1,'tease::Semver::Semver(const Semver &amp;other)'],['../classtease_1_1_semver.html#a160cec6b3de6f81546a15fa56307ebfc',1,'tease::Semver::Semver(Semver &amp;&amp;other) noexcept']]],
-  ['semver_5fmajor_7',['SEMVER_MAJOR',['../classtease_1_1_semver.html#a2f4318f73a9213d49fc67236a1154fdeac8cdb31315ad77d1c09897069ef9545d',1,'tease::Semver']]],
-  ['semver_5fminor_8',['SEMVER_MINOR',['../classtease_1_1_semver.html#a2f4318f73a9213d49fc67236a1154fdea7fdfcd7f10a5d2a3d004390251ad0b58',1,'tease::Semver']]],
-  ['semver_5fnb_5ffields_9',['SEMVER_NB_FIELDS',['../classtease_1_1_semver.html#a2f4318f73a9213d49fc67236a1154fdea200a552f57dfe75089506b6791d483d5',1,'tease::Semver']]],
-  ['semver_5fpatch_10',['SEMVER_PATCH',['../classtease_1_1_semver.html#a2f4318f73a9213d49fc67236a1154fdea4f2c20d05197c7b92e9b2bd640700e63',1,'tease::Semver']]],
-  ['setcbcompleted_11',['setCbCompleted',['../classtease_1_1_transfer_manager.html#a0971c2fe4f4c75d5bc3535617c8e47ce',1,'tease::TransferManager']]],
-  ['setcbfailed_12',['setCbFailed',['../classtease_1_1_transfer_manager.html#a598564e7b15c0bd9c0003db73695b1b4',1,'tease::TransferManager']]],
-  ['setcbprogress_13',['setCbProgress',['../classtease_1_1_transfer_manager.html#af06a31d6e603e959e13b636676c09117',1,'tease::TransferManager']]],
-  ['setcbstarted_14',['setCbStarted',['../classtease_1_1_transfer_manager.html#acefcaf920049f11d4eb3886d77eda38a',1,'tease::TransferManager']]],
-  ['setfromfile_15',['setFromFile',['../classtease_1_1_bytes_array.html#a63af2a00acaa0b1e399b4c7959a4b297',1,'tease::BytesArray']]],
-  ['setfromstring_16',['setFromString',['../classtease_1_1_bytes_array.html#a38f58d31fa2a798d24d31d8207c807c9',1,'tease::BytesArray']]],
-  ['setnbmaxtrials_17',['setNbMaxTrials',['../classtease_1_1_transfer_manager.html#afc4fb7b8032f518a2afa3db0686190cb',1,'tease::TransferManager']]],
-  ['setoptions_18',['setOptions',['../classtease_1_1_transfer_manager.html#a5ccc8e0f25e48363921bcfa14dc7cd40',1,'tease::TransferManager']]],
-  ['settimeoutconnection_19',['setTimeoutConnection',['../classtease_1_1_transfer_manager.html#ae7263c6e648f89da08905b7d77c9e3ab',1,'tease::TransferManager']]],
-  ['settimeouttransfer_20',['setTimeoutTransfer',['../classtease_1_1_transfer_manager.html#a713211047db3d8b7e83f05535b5452d5',1,'tease::TransferManager']]],
-  ['seturl_21',['setUrl',['../classtease_1_1_url.html#a2cb9ffd670935f534387731d459b8862',1,'tease::Url']]],
-  ['setuserinfos_22',['setUserInfos',['../classtease_1_1_transfer_manager.html#a46063ec0d43303bc2c7fb353e0955e9a',1,'tease::TransferManager']]],
-  ['standards_23',['1.1. C++ Standards',['../index.html#autotoc_md11-c-standards',1,'']]],
-  ['startdownload_24',['startDownload',['../classtease_1_1_transfer_manager.html#af0962b72b7ce1b8c9aedd62a3301d857',1,'tease::TransferManager']]],
-  ['startupload_25',['startUpload',['../classtease_1_1_transfer_manager.html#ab5fb3a2e613ac3d01dda29f36d533f9b',1,'tease::TransferManager']]]
+  ['request_0',['Request',['../classtease_1_1_request.html',1,'tease']]],
+  ['requirements_1',['1. Requirements',['../index.html#autotoc_md1-requirements',1,'']]],
+  ['reserve_2',['reserve',['../classtease_1_1_bytes_array.html#a5930a3c0a8a6254815eb715b39a7d93d',1,'tease::BytesArray']]],
+  ['runtime_3',['3.3.2. Runtime',['../index.html#autotoc_md332-runtime',1,'']]]
 ];

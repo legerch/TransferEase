@@ -158,6 +158,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab5fb3a2e613ac3d01dda29f36d533f9b" id="r_ab5fb3a2e613ac3d01dda29f36d533f9b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a753388dcb27fe9e8e642eb1c98125423">IdError</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab5fb3a2e613ac3d01dda29f36d533f9b">startUpload</a> (const <a class="el" href="classtease_1_1_request.html#a661ff6be57e7bbfcaba19f8700600f94">Request::List</a> &amp;listReqs)</td></tr>
 <tr class="memdesc:ab5fb3a2e613ac3d01dda29f36d533f9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use to start upload list of requests.  <br /></td></tr>
 <tr class="separator:ab5fb3a2e613ac3d01dda29f36d533f9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48808f416a3076958fcde0b05789274e" id="r_a48808f416a3076958fcde0b05789274e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a48808f416a3076958fcde0b05789274e">abortTransfer</a> ()</td></tr>
+<tr class="memdesc:a48808f416a3076958fcde0b05789274e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use to abort current transfer.  <br /></td></tr>
+<tr class="separator:a48808f416a3076958fcde0b05789274e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afcdbca933da276c0262c25c8a8ba887e" id="r_afcdbca933da276c0262c25c8a8ba887e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afcdbca933da276c0262c25c8a8ba887e">transferIsInProgress</a> () const</td></tr>
 <tr class="memdesc:afcdbca933da276c0262c25c8a8ba887e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verify is a tranfer is in progress or not.  <br /></td></tr>
 <tr class="separator:afcdbca933da276c0262c25c8a8ba887e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -573,6 +576,32 @@ A simple example used to download/upload a list of request: </p><div class="frag
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a48808f416a3076958fcde0b05789274e" name="a48808f416a3076958fcde0b05789274e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a48808f416a3076958fcde0b05789274e">&#9670;&#160;</a></span>abortTransfer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tease::TransferManager::abortTransfer </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Use to abort current transfer. </p>
+<p>This method will return directly, that don't mean that transfer has been aborted yet. <br  />
+Once transfer aborted, callback <code><a class="el" href="#a446baeabdfd7ac45e98a43798f8d255c" title="Callback called when transfer finished due to an error.">TransferManager::CbFailed</a></code> will be called with error code <code><a class="el" href="#a753388dcb27fe9e8e642eb1c98125423a6f0ac990f94f51bdb360ddc32d2c150f">TransferManager::ERR_USER_ABORT</a></code>. <br  />
+Nothing will be perform if no transfer is currently running</p>
+<dl class="section note"><dt>Note</dt><dd>This method is <em>thread-safe</em> </dd>
+<dd>
+This method is asynchronous, so please use dedicated callbacks to manage transfer status.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#af0962b72b7ce1b8c9aedd62a3301d857" title="Use to start downloading list of requests.">startDownload()</a>, <a class="el" href="#ab5fb3a2e613ac3d01dda29f36d533f9b" title="Use to start upload list of requests.">startUpload()</a> </dd></dl>
+
+</div>
+</div>
 <a id="a3784de4ecf955ff81beea610bc1762a7" name="a3784de4ecf955ff81beea610bc1762a7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3784de4ecf955ff81beea610bc1762a7">&#9670;&#160;</a></span>flagOptionToStr()</h2>
 
@@ -614,7 +643,7 @@ Example: <div class="fragment"><div class="line"><span class="keyword">const</sp
 <div class="ttc" id="aclasstease_1_1_transfer_manager_html_a05d743099d8c94756eaba0fd718be5b8"><div class="ttname"><a href="#a05d743099d8c94756eaba0fd718be5b8">tease::TransferManager::FlagOption</a></div><div class="ttdeci">FlagOption</div><div class="ttdoc">List of available options.</div><div class="ttdef"><b>Definition</b> transfermanager.h:52</div></div>
 <div class="ttc" id="aclasstease_1_1_transfer_manager_html_a05d743099d8c94756eaba0fd718be5b8a7c1d72c55d359a48d0d2d3d16fb6c57b"><div class="ttname"><a href="#a05d743099d8c94756eaba0fd718be5b8a7c1d72c55d359a48d0d2d3d16fb6c57b">tease::TransferManager::OPT_FTP_CREATE_DIRS</a></div><div class="ttdeci">@ OPT_FTP_CREATE_DIRS</div><div class="ttdef"><b>Definition</b> transfermanager.h:56</div></div>
 <div class="ttc" id="aclasstease_1_1_transfer_manager_html_a05d743099d8c94756eaba0fd718be5b8afe9b8146554955f26775d173a40a4fad"><div class="ttname"><a href="#a05d743099d8c94756eaba0fd718be5b8afe9b8146554955f26775d173a40a4fad">tease::TransferManager::OPT_VERBOSE</a></div><div class="ttdeci">@ OPT_VERBOSE</div><div class="ttdef"><b>Definition</b> transfermanager.h:55</div></div>
-<div class="ttc" id="aclasstease_1_1_transfer_manager_html_a3784de4ecf955ff81beea610bc1762a7"><div class="ttname"><a href="#a3784de4ecf955ff81beea610bc1762a7">tease::TransferManager::flagOptionToStr</a></div><div class="ttdeci">static std::string flagOptionToStr(FlagOption options, char separator='|')</div><div class="ttdoc">Use to convert flags option to a string.</div><div class="ttdef"><b>Definition</b> transfermanager.cpp:1116</div></div>
+<div class="ttc" id="aclasstease_1_1_transfer_manager_html_a3784de4ecf955ff81beea610bc1762a7"><div class="ttname"><a href="#a3784de4ecf955ff81beea610bc1762a7">tease::TransferManager::flagOptionToStr</a></div><div class="ttdeci">static std::string flagOptionToStr(FlagOption options, char separator='|')</div><div class="ttdoc">Use to convert flags option to a string.</div><div class="ttdef"><b>Definition</b> transfermanager.cpp:1156</div></div>
 </div><!-- fragment --> </dd></dl>
 
 </div>
@@ -1044,7 +1073,9 @@ Once transfer is finished, user can read request content directly</td></tr>
 This method is asynchronous, so please use dedicated callbacks to manage transfer status.</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns <code><a class="el" href="#a753388dcb27fe9e8e642eb1c98125423aea65e51e78bc96951a6c02a79cc13bba">TransferManager::ERR_NO_ERROR</a></code> if download succeed to be prepared. <br  />
 This method will return <code><a class="el" href="#a753388dcb27fe9e8e642eb1c98125423a1022d9fe47fe4299006e00c06a6e00a7">TransferManager::ERR_BUSY</a></code> error if a transfer is already running or if called from a callback.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ab5fb3a2e613ac3d01dda29f36d533f9b" title="Use to start upload list of requests.">startUpload()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ab5fb3a2e613ac3d01dda29f36d533f9b" title="Use to start upload list of requests.">startUpload()</a> </dd>
+<dd>
+<a class="el" href="#a48808f416a3076958fcde0b05789274e" title="Use to abort current transfer.">abortTransfer()</a> </dd></dl>
 
 </div>
 </div>
@@ -1077,7 +1108,9 @@ Once transfer is finished, user can still use request content.</td></tr>
 This method is asynchronous, so please use dedicated callbacks to manage transfer status.</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns <code><a class="el" href="#a753388dcb27fe9e8e642eb1c98125423aea65e51e78bc96951a6c02a79cc13bba">TransferManager::ERR_NO_ERROR</a></code> if upload succeed to be prepared. <br  />
 This method will return <code><a class="el" href="#a753388dcb27fe9e8e642eb1c98125423a1022d9fe47fe4299006e00c06a6e00a7">TransferManager::ERR_BUSY</a></code> error if a transfer is already running or if called from a callback.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#af0962b72b7ce1b8c9aedd62a3301d857" title="Use to start downloading list of requests.">startDownload()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#af0962b72b7ce1b8c9aedd62a3301d857" title="Use to start downloading list of requests.">startDownload()</a> </dd>
+<dd>
+<a class="el" href="#a48808f416a3076958fcde0b05789274e" title="Use to abort current transfer.">abortTransfer()</a> </dd></dl>
 
 </div>
 </div>
