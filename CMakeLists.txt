@@ -12,6 +12,10 @@ project(${PROJECT_NAME} VERSION "${PROJECT_VERSION_SEMANTIC}")
 # Define project options
 option(TEASE_BUILD_TESTS "Use to enable/disable build of unit-tests." ON)
 
+# Manage global compiler options
+## For MSVC: force to read source code as UTF-8 file (already default behaviour on GCC and Clang)
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+
 # Where to export generated binaries
 if(NOT PROJECT_BUILD_OUTPUT)
     set(PROJECT_BUILD_OUTPUT ${CMAKE_SOURCE_DIR}/build/output/${PROJECT_ARCH_TARGET}/${CMAKE_BUILD_TYPE})
