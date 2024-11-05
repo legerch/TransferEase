@@ -1,5 +1,6 @@
 #include "transferease/version/semver.h"
 
+#include <array>
 #include <numeric>
 
 #include "tools/stringhelper.h"
