@@ -373,11 +373,25 @@ bool TransferManager::Impl::performTransfer(IdError &idErr)
 void TransferManager::Impl::updateProgress()
 {
     /* Calculate list progress */
-    size_t sizeTotal = 0, sizeCurrent = 0;
+    size_t sizeTotal = 0, sizeCurrent = 0, sizeRef = 0;
+    int nbUnks = 0;
     for(const auto &req : m_listReqs){
-        sizeTotal += req->ioGetSizeTotal();
-        sizeCurrent += req->ioGetSizeCurrent();
+        // Find maximum size on all request
+        sizeRef = std::max(sizeRef, req->ioGetSizeTotal());
+
+        // Count number of unknown request size
+        if(req->ioGetSizeTotal() == 0){
+            ++nbUnks;
+
+        // Transfer has started, we have all infos
+        }else{
+            sizeTotal += req->ioGetSizeTotal();
+            sizeCurrent += req->ioGetSizeCurrent();
+        }
     }
+
+    /* Adjust total size with number of unknown size request */
+    sizeTotal += (nbUnks * sizeRef);
 
     /* Inform user */
     m_cbProgress(m_typeTransfer, sizeTotal, sizeCurrent);
