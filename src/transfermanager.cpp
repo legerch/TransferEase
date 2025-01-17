@@ -1148,6 +1148,12 @@ void TransferManager::setCbFailed(CbFailed fct)
  */
 double TransferManager::transferProgressToPercent(size_t transferTotal, size_t transferNow)
 {
+    /* Verify division by 0 */
+    if(transferTotal == 0){
+        return 0.0;
+    }
+
+    /* Perform calculation */
     return (static_cast<double>(transferNow) / transferTotal) * 100.0;
 }
 
