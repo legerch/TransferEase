@@ -109,8 +109,8 @@ $(function(){ initResizable(false); });
 <li><a class="el" href="#autotoc_md12-dependencies">1.2. Dependencies</a></li>
 </ul>
 </li>
-<li><a class="el" href="#autotoc_md2-integration">2. Integration</a><ul>
-<li><a class="el" href="#autotoc_md21-how-to-build">2.1. How to build</a></li>
+<li><a class="el" href="#autotoc_md2-how-to-build">2. How to build</a><ul>
+<li><a class="el" href="#autotoc_md21-cmake-usage">2.1. CMake usage</a></li>
 <li><a class="el" href="#autotoc_md22-cmake-options">2.2. CMake options</a></li>
 </ul>
 </li>
@@ -118,18 +118,15 @@ $(function(){ initResizable(false); });
 <li><a class="el" href="#autotoc_md31-usage">3.1. Usage</a></li>
 <li><a class="el" href="#autotoc_md32-logs-management">3.2. Logs management</a></li>
 <li><a class="el" href="#autotoc_md33-library-version">3.3. Library version</a><ul>
-<li><a class="el" href="#autotoc_md331-compilation-time">3.3.1. Compilation time</a></li>
-<li><a class="el" href="#autotoc_md332-runtime">3.3.2. Runtime</a></li>
+<li><a class="el" href="#autotoc_md331-compatibility">3.3.1. Compatibility</a></li>
+<li><a class="el" href="#autotoc_md332-compilation-time">3.3.2. Compilation time</a></li>
+<li><a class="el" href="#autotoc_md333-runtime">3.3.3. Runtime</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="el" href="#autotoc_md4-library-details">4. Library details</a><ul>
-<li><a class="el" href="#autotoc_md41-implementation">4.1. Implementation</a></li>
-<li><a class="el" href="#autotoc_md42-known-issues">4.2. Known issues</a><ul>
-<li><a class="el" href="#autotoc_md421-large-files">4.2.1. Large files</a></li>
-</ul>
-</li>
+<li><a class="el" href="#autotoc_md4-known-issues">4. Known issues</a><ul>
+<li><a class="el" href="#autotoc_md41-large-files">4.1. Large files</a></li>
 </ul>
 </li>
 <li><a class="el" href="#autotoc_md5-documentation">5. Documentation</a></li>
@@ -154,12 +151,12 @@ $(function(){ initResizable(false); });
 <blockquote class="doxtable">
 <p>&zwj;Dependency manager <a href="https://github.com/legerch/develop-memo/tree/master/Toolchains/Build%20systems/VCPKG">VCPKG</a> is not mandatory, this is only a note to be able to list needed packages </p>
 </blockquote>
-<h1><a class="anchor" id="autotoc_md2-integration"></a>
-2. Integration</h1>
-<h2><a class="anchor" id="autotoc_md21-how-to-build"></a>
-2.1. How to build</h2>
+<h1><a class="anchor" id="autotoc_md2-how-to-build"></a>
+2. How to build</h1>
+<h2><a class="anchor" id="autotoc_md21-cmake-usage"></a>
+2.1. CMake usage</h2>
 <p>This library can be use as an <em>embedded library</em> in a subdirectory of your project (like a <em>git submodule</em> for example) :</p><ol type="1">
-<li>In the <b>root</b> CMakeLists, add instructions : <div class="fragment"><div class="line">add_subdirectory(TransferEase) # Or if library is put in a folder &quot;dependencies&quot; : add_subdirectory(dependencies/TransferEase)</div>
+<li>In the <b>root</b> CMakeLists, add instructions : <div class="fragment"><div class="line">add_subdirectory(transferease) # Or if library is put in a folder &quot;dependencies&quot; : add_subdirectory(dependencies/transferease)</div>
 </div><!-- fragment --></li>
 <li>In the <b>application/library</b> CMakeLists, add instructions : <div class="fragment"><div class="line"># Link needed libraries</div>
 <div class="line">target_link_libraries(${PROJECT_NAME} PRIVATE transferease)</div>
@@ -181,29 +178,27 @@ $(function(){ initResizable(false); });
  More details on how to use this log interface can be found inside <a href="https://github.com/legerch/AbstractLogger">abstract logger repository</a></p>
 <h2><a class="anchor" id="autotoc_md33-library-version"></a>
 3.3. Library version</h2>
-<h3><a class="anchor" id="autotoc_md331-compilation-time"></a>
-3.3.1. Compilation time</h3>
+<h3><a class="anchor" id="autotoc_md331-compatibility"></a>
+3.3.1. Compatibility</h3>
+<p>This library use the <a href="https://en.cppreference.com/w/cpp/language/pimpl">PImpl Idiom</a> in order to preserve <em>ABI compatibility</em> (<em>Qt wiki</em> also have a <a href="https://wiki.qt.io/D-Pointer">great tutorial on the PImpl idiom</a>). <br  />
+ So only <b>major</b> release (this project use the <a href="https://semver.org">semantic versioning</a>) <em>should</em> break the ABI.</p>
+<h3><a class="anchor" id="autotoc_md332-compilation-time"></a>
+3.3.2. Compilation time</h3>
 <p>In order to easily check at compilation time library version (to manage compatibility between multiple versions for example), macro <code>TEASE_VERSION_ENCODE</code> (defined inside <em>transferease_global.h</em> file) can be used: </p><div class="fragment"><div class="line"><span class="preprocessor">#if TEASE_VERSION &gt;= TEASE_VERSION_ENCODE(1,0,0)</span></div>
 <div class="line">    <span class="comment">// Do stuff for version 1.0.0 or higher</span></div>
 <div class="line"><span class="preprocessor">#else</span></div>
 <div class="line">    <span class="comment">// Do stuff for version 0.0.x</span></div>
 <div class="line"><span class="preprocessor">#endif</span></div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md332-runtime"></a>
-3.3.2. Runtime</h3>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md333-runtime"></a>
+3.3.3. Runtime</h3>
 <p>Since library header used during final application build could differ from the <b>actual</b> library version, it is recommended to use the static method: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;transferease/version/semver.h&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keyword">const</span> Semver &amp;teaseSemver = <a class="code hl_function" href="classtease_1_1_semver.html#aa8cc69b8c555aff34b234cd9283e656b">tease::Semver::getLibraryVersion</a>();</div>
 <div class="ttc" id="aclasstease_1_1_semver_html_aa8cc69b8c555aff34b234cd9283e656b"><div class="ttname"><a href="classtease_1_1_semver.html#aa8cc69b8c555aff34b234cd9283e656b">tease::Semver::getLibraryVersion</a></div><div class="ttdeci">static const Semver &amp; getLibraryVersion()</div><div class="ttdoc">Retrieve library semantic version at runtime.</div><div class="ttdef"><b>Definition</b> semver.cpp:254</div></div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md4-library-details"></a>
-4. Library details</h1>
-<h2><a class="anchor" id="autotoc_md41-implementation"></a>
-4.1. Implementation</h2>
-<p>This library use the <a href="https://en.cppreference.com/w/cpp/language/pimpl">PImpl Idiom</a> in order to preserve <em>ABI compatibility</em> (<em>Qt wiki</em> also have a <a href="https://wiki.qt.io/D-Pointer">great tutorial on the PImpl idiom</a>). <br  />
- So only <b>major</b> release (this project use the <a href="https://semver.org">semantic versioning</a>) <em>should</em> break the ABI.</p>
-<h2><a class="anchor" id="autotoc_md42-known-issues"></a>
-4.2. Known issues</h2>
-<h3><a class="anchor" id="autotoc_md421-large-files"></a>
-4.2.1. Large files</h3>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md4-known-issues"></a>
+4. Known issues</h1>
+<h2><a class="anchor" id="autotoc_md41-large-files"></a>
+4.1. Large files</h2>
 <p>Currently, library store all downloaded/uploaded datas in <em>heap memory</em>, that provide us some advantages:</p><ul>
 <li>For <b>uploaded</b> datas, we don't have to load data from a file (we still can) but those can also be runtime generated</li>
 <li>For <b>downloaded</b> datas, we can <em>play</em> with received datas directly instead of writing them on the disk and reloading those into memory</li>
@@ -228,7 +223,7 @@ $(function(){ initResizable(false); });
 </div><!-- fragment --> <dl class="section remark"><dt>Remarks</dt><dd>You can also load the <em>Doxyfile</em> into <em>Doxywizard</em> (Doxygen GUI) and run generation.</dd></dl>
 <h1><a class="anchor" id="autotoc_md6-license"></a>
 6. License</h1>
-<p>This library is licensed under <b>MIT license</b>. </p>
+<p>This library is licensed under <a href="https://github.com/legerch/TransferEase/LICENSE.md">MIT license</a>. </p>
 </div></div><!-- PageDoc -->
 <a href="doxygen_crawl.html"></a>
 </div><!-- contents -->

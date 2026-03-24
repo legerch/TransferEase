@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['time_0',['3.3.1. Compilation time',['../index.html#autotoc_md331-compilation-time',1,'']]],
-  ['to_20build_1',['2.1. How to build',['../index.html#autotoc_md21-how-to-build',1,'']]],
+  ['time_0',['3.3.2. Compilation time',['../index.html#autotoc_md332-compilation-time',1,'']]],
+  ['to_20build_1',['2. How to build',['../index.html#autotoc_md2-how-to-build',1,'']]],
   ['to_20use_2',['3. How to use',['../index.html#autotoc_md3-how-to-use',1,'']]],
   ['tofile_3',['toFile',['../classtease_1_1_bytes_array.html#ae696ba13a04d5e724774b90cf1f24109',1,'tease::BytesArray']]],
   ['tostring_4',['toString',['../classtease_1_1_url.html#a2148ae67a301098c13d811e4b57faea9',1,'tease::Url::toString()'],['../classtease_1_1_semver.html#ae452fe158a931f38d04308546632f8f9',1,'tease::Semver::toString()']]],
