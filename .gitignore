@@ -1,6 +1,10 @@
+# OS files
+.DS_Store
+
 # IDE Configuration
 .vscode/
 *.user
+*.code-workspace
 
 # Doc generation
 api-internal/
@@ -11,3 +15,4 @@ build/
 
 # Auto generated files
 transferease_global.h
+metadata/windows/infos.rc

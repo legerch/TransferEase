@@ -3,14 +3,24 @@
 
 /*!
  * \file transferease_global.h
+ *
+ * \note
+ * Based on <a href="https://github.com/legerch/projects-template">Projects template repository</a>.
+ * Template file version: 2025-07-24
  */
+
+/**********************************
+ * Library informations
+ *********************************/
+#define TEASE_INFO_ID     "@PROJECT_NAME@"
+#define TEASE_INFO_NAME   "@PRJ_READABLE_NAME@"
 
 /**********************************
  * Version management
  *********************************/
 
 /*!
- * \brief Use to perform compilation version comparisons
+ * \brief Use to perform compilation version comparaisons
  * \details
  * For example:
  * \code{.cpp}
@@ -20,14 +30,6 @@
  *     // Do stuff for version 0.0.x
  * #endif
  * \endcode
- * 
- * \note
- * Use those macros only for build time check,
- * otherwise to display/manage library version
- * at runtime, prefer to use static method
- * \c tease::Semver::getLibraryVersion()
- * 
- * \sa tease::Semver::getLibraryVersion()
  */
 #define TEASE_VERSION_ENCODE(major, minor, path)    ((major) * 10000 + (minor) * 100 + (patch))
 
@@ -44,7 +46,6 @@
 /**********************************
  * Library management
  *********************************/
-
 #ifdef __GNUC__
 #   if defined(TEASE_LIBRARY_BUILD)
 #       define TEASE_EXPORT __attribute__((visibility("default")))
@@ -62,7 +63,7 @@
 /**********************************
  * Deprecations warnings
  *********************************/
-#define TEASE_DEPREC              [[deprecated]]            /**< Use to mark a method as deprecated. \n\code{.cpp}TEASE_DEPREC void myOldFct(); \endcode */
+#define TEASE_DEPREC              [[deprecated]]          /**< Use to mark a method as deprecated. \n\code{.cpp}TEASE_DEPREC void myOldFct(); \endcode */
 #define TEASE_DEPREC_X(reason)    [[deprecated(reason)]] 	/**< Use to mark a method as deprecated and specify a reason. \n\code{.cpp}TEASE_DEPREC_X("Use myNewFct() instead") void myOldFunc(); \endcode */
 
 /**********************************
@@ -102,8 +103,8 @@
 /**********************************
  * Variables attributes
  *********************************/
-#define TEASE_VAR_MAYBE_UNUSED      [[maybe_unused]]
-#define TEASE_VAR_UNUSED            TEASE_VAR_MAYBE_UNUSED
+#define TEASE_VAR_MAYBE_UNUSED    [[maybe_unused]]
+#define TEASE_VAR_UNUSED          TEASE_VAR_MAYBE_UNUSED
 
 /**********************************
  * Classes behaviours
@@ -119,6 +120,11 @@
 #define TEASE_DISABLE_COPY_MOVE(Class) \
     TEASE_DISABLE_COPY(Class) \
     TEASE_DISABLE_MOVE(Class)
+
+/**********************************
+ * Helpers
+ *********************************/
+#define TEASE_E2I(enumValue)  (static_cast<int>(enumValue))
 
 /*!
  * \endcond
