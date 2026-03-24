@@ -11,19 +11,18 @@ C++ cross-platform library [TransferEase][tease-repo] which provide methods to d
 - [1. Requirements](#1-requirements)
   - [1.1. C++ Standards](#11-c-standards)
   - [1.2. Dependencies](#12-dependencies)
-- [2. Integration](#2-integration)
-  - [2.1. How to build](#21-how-to-build)
+- [2. How to build](#2-how-to-build)
+  - [2.1. CMake usage](#21-cmake-usage)
   - [2.2. CMake options](#22-cmake-options)
 - [3. How to use](#3-how-to-use)
   - [3.1. Usage](#31-usage)
   - [3.2. Logs management](#32-logs-management)
   - [3.3. Library version](#33-library-version)
-    - [3.3.1. Compilation time](#331-compilation-time)
-    - [3.3.2. Runtime](#332-runtime)
-- [4. Library details](#4-library-details)
-  - [4.1. Implementation](#41-implementation)
-  - [4.2. Known issues](#42-known-issues)
-    - [4.2.1. Large files](#421-large-files)
+    - [3.3.1. Compatibility](#331-compatibility)
+    - [3.3.2. Compilation time](#332-compilation-time)
+    - [3.3.3. Runtime](#333-runtime)
+- [4. Known issues](#4-known-issues)
+  - [4.1. Large files](#41-large-files)
 - [5. Documentation](#5-documentation)
 - [6. License](#6-license)
 
@@ -43,12 +42,13 @@ Below, list of required dependencies:
 
 > Dependency manager [VCPKG][vcpkg-tutorial] is not mandatory, this is only a note to be able to list needed packages
 
-# 2. Integration
-## 2.1. How to build
+# 2. How to build
+## 2.1. CMake usage
+
 This library can be use as an _embedded library_ in a subdirectory of your project (like a _git submodule_ for example) :
 1. In the **root** CMakeLists, add instructions :
 ```cmake
-add_subdirectory(TransferEase) # Or if library is put in a folder "dependencies" : add_subdirectory(dependencies/TransferEase)
+add_subdirectory(transferease) # Or if library is put in a folder "dependencies" : add_subdirectory(dependencies/transferease)
 ```
 
 2. In the **application/library** CMakeLists, add instructions :
@@ -74,7 +74,12 @@ from `tease::ILogger` interface.
 More details on how to use this log interface can be found inside [abstract logger repository][virtual-log-repo]
 
 ## 3.3. Library version
-### 3.3.1. Compilation time
+### 3.3.1. Compatibility
+
+This library use the [PImpl Idiom][pimpl-doc-cpp] in order to preserve _ABI compatibility_ (_Qt wiki_ also have a [great tutorial on the PImpl idiom][pimpl-doc-qt]).  
+So only **major** release (this project use the [semantic versioning][semver-home]) _should_ break the ABI.
+
+### 3.3.2. Compilation time
 
 In order to easily check at compilation time library version (to manage compatibility between multiple versions for example), macro `TEASE_VERSION_ENCODE` (defined inside _transferease_global.h_ file) can be used:
 ```cpp
@@ -85,7 +90,7 @@ In order to easily check at compilation time library version (to manage compatib
 #endif
 ```
 
-### 3.3.2. Runtime
+### 3.3.3. Runtime
 
 Since library header used during final application build could differ from the **actual** library version, it is recommended to use the static method:
 ```cpp
@@ -94,14 +99,8 @@ Since library header used during final application build could differ from the *
 const Semver &teaseSemver = tease::Semver::getLibraryVersion();
 ```
 
-# 4. Library details
-## 4.1. Implementation
-
-This library use the [PImpl Idiom][pimpl-doc-cpp] in order to preserve _ABI compatibility_ (_Qt wiki_ also have a [great tutorial on the PImpl idiom][pimpl-doc-qt]).  
-So only **major** release (this project use the [semantic versioning][semver-home]) _should_ break the ABI.
-
-## 4.2. Known issues
-### 4.2.1. Large files
+# 4. Known issues
+## 4.1. Large files
 
 Currently, library store all downloaded/uploaded datas in _heap memory_, that provide us some advantages:
 - For **uploaded** datas, we don't have to load data from a file (we still can) but those can also be runtime generated
@@ -137,10 +136,12 @@ doxygen ./Doxyfile-name
 
 # 6. License
 
-This library is licensed under **MIT license**.
+This library is licensed under [MIT license][repo-license-url].
 
 <!-- Links of this repository -->
 [repo-doc-web]: https://legerch.github.io/TransferEase/
+[repo-license]: LICENSE.md
+[repo-license-url]: https://github.com/legerch/TransferEase/LICENSE.md
 
 <!-- External links -->
 [doxygen-official]: https://www.doxygen.nl/index.html
