@@ -40,7 +40,10 @@ public:
     explicit Url(const std::string &url);
 
     Url(const Url &other);
+    Url& operator=(const Url &other);
+
     Url(Url &&other) noexcept;
+    Url& operator=(Url &&other) noexcept;
 
     virtual ~Url();
 
@@ -59,17 +62,13 @@ public:
     std::string toString() const;
 
     IdScheme getIdScheme() const;
-    const std::string& getHost() const;
+    const std::string getHost() const;
     uint16_t getPort() const;
-    const std::string& getPath() const;
+    const std::string getPath() const;
 
 public:
     static std::string idSchemeToString(IdScheme idScheme);
     static IdScheme idSchemeFromString(const std::string &idScheme);
-
-public:
-    Url& operator=(const Url &other);
-    Url& operator=(Url &&other) noexcept;
 
 public:
     TEASE_EXPORT friend bool operator==(const Url &left, const Url &right);
