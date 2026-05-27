@@ -15,6 +15,7 @@ struct DataUrlParse
     std::string expHost;
     uint16_t expPort;
     std::string expPath;
+    std::string expEncoded;
 };
 
 class TestUrlParsing : public ::testing::TestWithParam<DataUrlParse>{};
@@ -32,26 +33,27 @@ TEST_P(TestUrlParsing, validateUrls)
         EXPECT_EQ(url.getPort(), params.expPort);
         EXPECT_EQ(url.getPath(), params.expPath);
 
-        EXPECT_EQ(url.toString(), params.inputUrl);
+        EXPECT_EQ(url.toString(), params.expEncoded);
 
     }else{
         EXPECT_EQ(url.getIdScheme(), Url::SCHEME_UNK);
         EXPECT_EQ(url.getHost(), "");
         EXPECT_EQ(url.getPort(), 0);
-        EXPECT_EQ(url.getPath(), "");
+        EXPECT_EQ(url.getPath(), "/");
+        EXPECT_EQ(url.toString(), "");
     }
 }
 
 INSTANTIATE_TEST_SUITE_P(
     validateUrls, TestUrlParsing, ::testing::Values(
-        DataUrlParse{.inputUrl = "https://example.com:8080/path/to/resource", .expIsValid = true, .expIdScheme = Url::SCHEME_HTTPS, .expHost = "example.com", .expPort = 8080, .expPath = "/path/to/resource"},
-        DataUrlParse{.inputUrl = "http://example.com:8080/path/to/resource", .expIsValid = true, .expIdScheme = Url::SCHEME_HTTP, .expHost = "example.com", .expPort = 8080, .expPath = "/path/to/resource"},
-        DataUrlParse{.inputUrl = "https://example.com/path/to/resource", .expIsValid = true, .expIdScheme = Url::SCHEME_HTTPS, .expHost = "example.com", .expPort = 0, .expPath = "/path/to/resource"},
-        DataUrlParse{.inputUrl = "http://example.com/path/to/resource", .expIsValid = true, .expIdScheme = Url::SCHEME_HTTP, .expHost = "example.com", .expPort = 0, .expPath = "/path/to/resource"},
-        DataUrlParse{.inputUrl = "https://example.com", .expIsValid = false, .expIdScheme = Url::SCHEME_HTTPS, .expHost = "example.com", .expPort = 0, .expPath = ""},
-        DataUrlParse{.inputUrl = "ftp://example.com:8080/path/to/resource.zip", .expIsValid = true, .expIdScheme = Url::SCHEME_FTP, .expHost = "example.com", .expPort = 8080, .expPath = "/path/to/resource.zip"},
-        DataUrlParse{.inputUrl = "ftps://example.com:8080/path/to/resource.zip", .expIsValid = true, .expIdScheme = Url::SCHEME_FTPS, .expHost = "example.com", .expPort = 8080, .expPath = "/path/to/resource.zip"},
-        DataUrlParse{.inputUrl = "not_an_url", .expIsValid = false, .expIdScheme = Url::SCHEME_UNK, .expHost = "", .expPort = 0, .expPath = ""}
+        DataUrlParse{.inputUrl = "https://example.com:8080/path/to/resource", .expIsValid = true, .expIdScheme = Url::SCHEME_HTTPS, .expHost = "example.com", .expPort = 8080, .expPath = "/path/to/resource", .expEncoded = "https://example.com:8080/path/to/resource"},
+        DataUrlParse{.inputUrl = "http://example.com:8080/path/to/resource", .expIsValid = true, .expIdScheme = Url::SCHEME_HTTP, .expHost = "example.com", .expPort = 8080, .expPath = "/path/to/resource", .expEncoded = "http://example.com:8080/path/to/resource"},
+        DataUrlParse{.inputUrl = "https://example.com/path/to/resource", .expIsValid = true, .expIdScheme = Url::SCHEME_HTTPS, .expHost = "example.com", .expPort = 0, .expPath = "/path/to/resource", .expEncoded = "https://example.com/path/to/resource"},
+        DataUrlParse{.inputUrl = "http://example.com/path/to/resource", .expIsValid = true, .expIdScheme = Url::SCHEME_HTTP, .expHost = "example.com", .expPort = 0, .expPath = "/path/to/resource", .expEncoded = "http://example.com/path/to/resource"},
+        DataUrlParse{.inputUrl = "https://example.com", .expIsValid = true, .expIdScheme = Url::SCHEME_HTTPS, .expHost = "example.com", .expPort = 0, .expPath = "/", .expEncoded = "https://example.com/"},
+        DataUrlParse{.inputUrl = "ftp://example.com:8080/path/to/resource.zip", .expIsValid = true, .expIdScheme = Url::SCHEME_FTP, .expHost = "example.com", .expPort = 8080, .expPath = "/path/to/resource.zip", .expEncoded = "ftp://example.com:8080/path/to/resource.zip"},
+        DataUrlParse{.inputUrl = "ftps://example.com:8080/path/to/resource.zip", .expIsValid = true, .expIdScheme = Url::SCHEME_FTPS, .expHost = "example.com", .expPort = 8080, .expPath = "/path/to/resource.zip", .expEncoded = "ftps://example.com:8080/path/to/resource.zip"},
+        DataUrlParse{.inputUrl = "not_an_url", .expIsValid = false, .expIdScheme = Url::SCHEME_UNK, .expHost = "", .expPort = 0, .expPath = "", .expEncoded = ""}
     )
 );
 
