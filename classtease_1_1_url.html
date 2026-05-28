@@ -130,14 +130,20 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:aef204ea43fafc77dda32ad70ee2865eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build a empty URL which will be invalid.  <br /></td></tr>
 <tr class="separator:aef204ea43fafc77dda32ad70ee2865eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afdf6b65e9e884433e42c35234641dd63" id="r_afdf6b65e9e884433e42c35234641dd63"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afdf6b65e9e884433e42c35234641dd63">Url</a> (const std::string &amp;url)</td></tr>
-<tr class="memdesc:afdf6b65e9e884433e42c35234641dd63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an URL from a string which will be parsed.  <br /></td></tr>
+<tr class="memdesc:afdf6b65e9e884433e42c35234641dd63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an URL from an already encoded string.  <br /></td></tr>
 <tr class="separator:afdf6b65e9e884433e42c35234641dd63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe801a21816be3f581470b53f9a5155f" id="r_abe801a21816be3f581470b53f9a5155f"><td class="memItemLeft" align="right" valign="top"><a id="abe801a21816be3f581470b53f9a5155f" name="abe801a21816be3f581470b53f9a5155f"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Url</b> (const <a class="el" href="classtease_1_1_url.html">Url</a> &amp;other)</td></tr>
 <tr class="separator:abe801a21816be3f581470b53f9a5155f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a510d1c12d5cc882b619350188d1a638a" id="r_a510d1c12d5cc882b619350188d1a638a"><td class="memItemLeft" align="right" valign="top"><a id="a510d1c12d5cc882b619350188d1a638a" name="a510d1c12d5cc882b619350188d1a638a"></a>
+<a class="el" href="classtease_1_1_url.html">Url</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classtease_1_1_url.html">Url</a> &amp;other)</td></tr>
+<tr class="separator:a510d1c12d5cc882b619350188d1a638a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41db1c4233399bb8e46134ce5dbb8796" id="r_a41db1c4233399bb8e46134ce5dbb8796"><td class="memItemLeft" align="right" valign="top"><a id="a41db1c4233399bb8e46134ce5dbb8796" name="a41db1c4233399bb8e46134ce5dbb8796"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Url</b> (<a class="el" href="classtease_1_1_url.html">Url</a> &amp;&amp;other) noexcept</td></tr>
 <tr class="separator:a41db1c4233399bb8e46134ce5dbb8796"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9fc3a08e87f1c0db80894cc6107b03c" id="r_ac9fc3a08e87f1c0db80894cc6107b03c"><td class="memItemLeft" align="right" valign="top"><a id="ac9fc3a08e87f1c0db80894cc6107b03c" name="ac9fc3a08e87f1c0db80894cc6107b03c"></a>
+<a class="el" href="classtease_1_1_url.html">Url</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classtease_1_1_url.html">Url</a> &amp;&amp;other) noexcept</td></tr>
+<tr class="separator:ac9fc3a08e87f1c0db80894cc6107b03c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc39273dbc22939d7ec2f1c99add8afd" id="r_acc39273dbc22939d7ec2f1c99add8afd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acc39273dbc22939d7ec2f1c99add8afd">clear</a> ()</td></tr>
 <tr class="memdesc:acc39273dbc22939d7ec2f1c99add8afd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use to reset an URL.  <br /></td></tr>
 <tr class="separator:acc39273dbc22939d7ec2f1c99add8afd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -165,21 +171,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setPath</b> (const st
 <tr class="memitem:a8c39d790cb95a8b1081a1317a2019f72" id="r_a8c39d790cb95a8b1081a1317a2019f72"><td class="memItemLeft" align="right" valign="top"><a id="a8c39d790cb95a8b1081a1317a2019f72" name="a8c39d790cb95a8b1081a1317a2019f72"></a>
 <a class="el" href="#ad69cd303ec35469d36c1f1e5a6e8e651">IdScheme</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getIdScheme</b> () const</td></tr>
 <tr class="separator:a8c39d790cb95a8b1081a1317a2019f72"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afaf6c76a360fc79665590b1619fd606d" id="r_afaf6c76a360fc79665590b1619fd606d"><td class="memItemLeft" align="right" valign="top"><a id="afaf6c76a360fc79665590b1619fd606d" name="afaf6c76a360fc79665590b1619fd606d"></a>
-const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getHost</b> () const</td></tr>
-<tr class="separator:afaf6c76a360fc79665590b1619fd606d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3250153406c9de9e85edbd42ff9eb323" id="r_a3250153406c9de9e85edbd42ff9eb323"><td class="memItemLeft" align="right" valign="top"><a id="a3250153406c9de9e85edbd42ff9eb323" name="a3250153406c9de9e85edbd42ff9eb323"></a>
+const std::string&#160;</td><td class="memItemRight" valign="bottom"><b>getHost</b> () const</td></tr>
+<tr class="separator:a3250153406c9de9e85edbd42ff9eb323"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52f43e8f13cef59091ecf4fec43f5c26" id="r_a52f43e8f13cef59091ecf4fec43f5c26"><td class="memItemLeft" align="right" valign="top"><a id="a52f43e8f13cef59091ecf4fec43f5c26" name="a52f43e8f13cef59091ecf4fec43f5c26"></a>
 uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>getPort</b> () const</td></tr>
 <tr class="separator:a52f43e8f13cef59091ecf4fec43f5c26"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a416d2cd7d92967262a7ec1e1e97ae389" id="r_a416d2cd7d92967262a7ec1e1e97ae389"><td class="memItemLeft" align="right" valign="top"><a id="a416d2cd7d92967262a7ec1e1e97ae389" name="a416d2cd7d92967262a7ec1e1e97ae389"></a>
-const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getPath</b> () const</td></tr>
-<tr class="separator:a416d2cd7d92967262a7ec1e1e97ae389"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a510d1c12d5cc882b619350188d1a638a" id="r_a510d1c12d5cc882b619350188d1a638a"><td class="memItemLeft" align="right" valign="top"><a id="a510d1c12d5cc882b619350188d1a638a" name="a510d1c12d5cc882b619350188d1a638a"></a>
-<a class="el" href="classtease_1_1_url.html">Url</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classtease_1_1_url.html">Url</a> &amp;other)</td></tr>
-<tr class="separator:a510d1c12d5cc882b619350188d1a638a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9fc3a08e87f1c0db80894cc6107b03c" id="r_ac9fc3a08e87f1c0db80894cc6107b03c"><td class="memItemLeft" align="right" valign="top"><a id="ac9fc3a08e87f1c0db80894cc6107b03c" name="ac9fc3a08e87f1c0db80894cc6107b03c"></a>
-<a class="el" href="classtease_1_1_url.html">Url</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classtease_1_1_url.html">Url</a> &amp;&amp;other) noexcept</td></tr>
-<tr class="separator:ac9fc3a08e87f1c0db80894cc6107b03c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abfde5dc9173941b3af612a23f3769cfa" id="r_abfde5dc9173941b3af612a23f3769cfa"><td class="memItemLeft" align="right" valign="top"><a id="abfde5dc9173941b3af612a23f3769cfa" name="abfde5dc9173941b3af612a23f3769cfa"></a>
+const std::string&#160;</td><td class="memItemRight" valign="bottom"><b>getPath</b> () const</td></tr>
+<tr class="separator:abfde5dc9173941b3af612a23f3769cfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -279,16 +279,15 @@ TEASE_EXPORT friend bool&#160;</td><td class="memItemRight" valign="bottom"><b>o
 </table>
 </div><div class="memdoc">
 
-<p>Create an URL from a string which will be parsed. </p>
-<p>See <a class="el" href="#a2cb9ffd670935f534387731d459b8862" title="Use to set URL from a string.">setUrl()</a> for more details.</p>
+<p>Create an URL from an already encoded string. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">url</td><td>URL to parse. <br  />
+    <tr><td class="paramdir">[in]</td><td class="paramname">url</td><td>URL to set, it must be already properly encoded (use <code>setPath()</code> as alternative to encode an URL path). <br  />
 If invalid or protocol unsupported, URL will be cleared.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a4d569aab48d39e8e7b93f27b288fcb39" title="Use to know if URL is valid.">isValid()</a>, <a class="el" href="#a2cb9ffd670935f534387731d459b8862" title="Use to set URL from a string.">setUrl()</a> </dd>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a4d569aab48d39e8e7b93f27b288fcb39" title="Use to know if URL is valid.">isValid()</a>, setPath() </dd>
 <dd>
 <a class="el" href="#acc39273dbc22939d7ec2f1c99add8afd" title="Use to reset an URL.">clear()</a> </dd></dl>
 
@@ -331,7 +330,7 @@ If invalid or protocol unsupported, URL will be cleared.</td></tr>
 </div><div class="memdoc">
 
 <p>Use to know if URL is valid. </p>
-<p>URL is considered valid if scheme is supported and associated fields are set.</p>
+<p>URL is considered valid if scheme is supported and host is set.</p>
 <dl class="section return"><dt>Returns</dt><dd>Returns <code>true</code> if URL is valid </dd></dl>
 
 </div>
