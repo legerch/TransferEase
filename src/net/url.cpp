@@ -1,11 +1,12 @@
 #include "transferease/net/url.h"
 
-#include <regex>
+#include "transferease/logs/abstractlogger.h"
+#include "tools/stringhelper.h"
+
+#include <algorithm>
 #include <unordered_map>
 
-#include "transferease/logs/abstractlogger.h"
-
-#include "tools/stringhelper.h"
+#include <curl/urlapi.h>
 
 /*****************************/
 /* Class documentations      */
@@ -37,17 +38,23 @@ class Url::Impl final
 
 public:
     explicit Impl(Url *parent);
+    ~Impl();
+
+    Impl(const Impl &other);
+    Impl& operator=(const Impl &other);
+
+    Impl(Impl &&other) noexcept;
+    Impl& operator=(Impl &&other) noexcept;
 
 public:
+    void setUrl(CURLU *url);
     bool parseUrl(const std::string &url);
 
-public:
-    IdScheme m_idScheme;
-    std::string m_host;
-    uint16_t m_port;
-    std::string m_path;
+    std::string getPart(CURLUPart idPart, uint flags) const;
 
-    Url *m_parent;
+public:
+    CURLU *m_url = nullptr;
+    Url *m_parent = nullptr;
 
 public:
     /*!
@@ -66,67 +73,102 @@ public:
 
 Url::Impl::Impl(Url *parent)
 {
+    m_url = curl_url();
     m_parent = parent;
 }
 
-/*!
- * \brief Use to parse URL
- * \details
- * Regex used was defined this way:
- * - <tt>(\w+)</tt>: Matches the scheme (e.g., http, https)
- * - <tt>:\/\/</tt>: Matches the literal string "://"
- * - <tt>([^\/:]+))</tt>: Matches the host (e.g., example.com), which consists of characters other than \c / and <tt>:</tt>.
- * - <tt>(?::(\d+))?</tt>: Optionally matches the port, capturing a sequence of digits following a <tt>:</tt>. \n
- * The \c ? makes the port optional.
- * - <tt>(\/.*)?</tt>: Optionally matches the path, capturing everything following a \c /
- *
- * \param[in] url
- * URL to parse.
- *
- * \return
- * Returns \c true if succeed to parse.
- */
+Url::Impl::~Impl()
+{
+    setUrl(nullptr);
+    m_parent = nullptr;
+}
+
+Url::Impl::Impl(const Url::Impl &other)
+{
+    if(other.m_url){
+        setUrl(curl_url_dup(other.m_url));
+    }
+}
+
+Url::Impl &Url::Impl::operator=(const Impl &other)
+{
+    /* Verify that entity is not already the same */
+    if(this == &other){
+        return *this;
+    }
+
+    /* Copy members */
+    if(other.m_url){
+        setUrl(curl_url_dup(other.m_url));
+    }
+
+    return *this;
+}
+
+Url::Impl::Impl(Impl &&other) noexcept
+    : m_url(other.m_url)
+{
+    other.m_url = nullptr;
+}
+
+Url::Impl &Url::Impl::operator=(Impl &&other) noexcept
+{
+    /* Verify that entity is not already the same */
+    if(this == &other){
+        return *this;
+    }
+
+    /* Move members */
+    setUrl(other.m_url);
+    other.m_url = nullptr;
+
+    return *this;
+}
+
+void Url::Impl::setUrl(CURLU *url)
+{
+    /* Verify that URL do not already exists */
+    if(m_url){
+        curl_url_cleanup(m_url);
+    }
+
+    /* Set URL */
+    m_url = url;
+}
+
 bool Url::Impl::parseUrl(const std::string &url)
 {
-    /* Define URI regex parser */
-    const std::regex uriRegex(R"(^(\w+):\/\/([^\/:]+)(?::(\d+))?(\/.*)?$)");
-    static constexpr int expMatches = 5; // 1 for full match, 4 for submatches
-
-    /* Verify regex matches */
-    std::smatch matchesRes;
-    bool hasMatches = std::regex_match(url, matchesRes, uriRegex);
-    if(!hasMatches){
-        const std::string err = StringHelper::format("No matches found when trying to parse URL [url: '%s']", url.c_str());
+    /* Set URL from string */
+    const CURLUcode idErr = curl_url_set(m_url, CURLUPART_URL, url.c_str(), CURLU_URLENCODE);
+    if(idErr != CURLUE_OK){
+        const std::string err = StringHelper::format("Unable to set URL from string [url: '%s', id-err: %d]", url.c_str(), idErr);
         TEASE_LOG_ERROR(err);
         return false;
     }
 
-    /* Do we have enough fields ? */
-    if(matchesRes.size() < expMatches){
-        const std::string err = StringHelper::format("Not enough fields inside URL [url: '%s']", url.c_str());
-        TEASE_LOG_ERROR(err);
-        return false;
-    }
-
-    /* Fill URL properties */
-    // Mandatory fields
-    const IdScheme idScheme = Url::idSchemeFromString(matchesRes[1].str());
+    /* Verify that scheme is supported */
+    const IdScheme idScheme = m_parent->getIdScheme();
     if(idScheme == SCHEME_UNK){
         return false;
     }
 
-    m_parent->setIdScheme(idScheme);
-    m_parent->setHost(matchesRes[2].str());
-    m_parent->setPath(matchesRes[4].str());
+    return true;
+}
 
-    // Optional fields
-    if(matchesRes[3].matched){
-        m_parent->setPort(StringHelper::toInt(matchesRes[3].str()));
-    }else{
-        m_parent->setPort(0);
+std::string Url::Impl::getPart(CURLUPart idPart, uint flags) const
+{
+    /* Retrieve URL needed part */
+    char *string = nullptr;
+    const CURLUcode idErr = curl_url_get(m_url, idPart, &string, flags);
+    if(idErr != CURLUE_OK){
+        return std::string();
     }
 
-    return m_parent->isValid();
+    /* Convert string and clean ressources */
+    const std::string part(string);
+    curl_free(string);
+
+    return part;
 }
 
 /*****************************/
@@ -146,17 +188,15 @@ Url::Url() :
 }
 
 /*!
- * \brief Create an URL from a string which will
- * be parsed
- * \details
- * See setUrl() for more details.
+ * \brief Create an URL from an already encoded string
  *
  * \param[in] url
- * URL to parse. \n
+ * URL to set, it must be already properly encoded (use
+ * \c setPath() as alternative to encode an URL path). \n
  * If invalid or protocol unsupported, URL will be
  * cleared.
  *
- * \sa isValid(), setUrl()
+ * \sa isValid(), setPath()
  * \sa clear()
  */
 Url::Url(const std::string &url) :
@@ -166,10 +206,38 @@ Url::Url(const std::string &url) :
 }
 
 Url::Url(const Url &other) :
-    d_ptr(std::make_unique<Impl>(*other.d_ptr)){}
+    d_ptr(std::make_unique<Impl>(*other.d_ptr))
+{
+    d_ptr->m_parent = this;
+}
+
+Url& Url::operator=(const Url &other)
+{
+    /* Verify that value actually differs */
+    if(this == &other){
+        return *this;
+    }
+
+    /* Perform copy assignment */
+    d_ptr = std::make_unique<Impl>(*other.d_ptr);
+    d_ptr->m_parent = this; // Be sure that proper parent stay
+
+    return *this;
+}
 
 Url::Url(Url &&other) noexcept :
-    d_ptr(std::move(other.d_ptr)){};
+    d_ptr(std::move(other.d_ptr))
+{
+    d_ptr->m_parent = this;
+};
+
+Url& Url::operator=(Url &&other) noexcept
+{
+    d_ptr = std::move(other.d_ptr);
+    d_ptr->m_parent = this; // Be sure that proper parent stay
+
+    return *this;
+}
 
 Url::~Url() = default;
 
@@ -180,10 +248,7 @@ Url::~Url() = default;
  */
 void Url::clear()
 {
-    d_ptr->m_idScheme = SCHEME_UNK;
-    d_ptr->m_host.clear();
-    d_ptr->m_port = 0;
-    d_ptr->m_path.clear();
+    d_ptr->setUrl(curl_url());
 }
 
 /*!
@@ -216,38 +281,38 @@ void Url::setUrl(const std::string &url)
 
 void Url::setIdScheme(IdScheme idScheme)
 {
-    d_ptr->m_idScheme = idScheme;
+    const std::string scheme = idSchemeToString(idScheme);
+    curl_url_set(d_ptr->m_url, CURLUPART_SCHEME, scheme.c_str(), 0);
 }
 
 void Url::setHost(const std::string &host)
 {
-    d_ptr->m_host = host;
+    curl_url_set(d_ptr->m_url, CURLUPART_HOST, host.c_str(), 0);
 }
 
 void Url::setPort(uint16_t port)
 {
-    d_ptr->m_port = port;
+    /* Do we need to disable explicit port info ? */
+    if(port == 0){
+        curl_url_set(d_ptr->m_url, CURLUPART_PORT, nullptr, 0);
+        return;
+    }
+
+    /* Set port to use */
+    const std::string portStr = std::to_string(port);
+    curl_url_set(d_ptr->m_url, CURLUPART_PORT, portStr.c_str(), 0);
 }
 
 void Url::setPath(const std::string &path)
 {
-    /* Clear previous path */
-    d_ptr->m_path.clear();
-
-    /* Manage missing path separator */
-    if(!path.empty() && path.front() != '/'){
-        d_ptr->m_path += '/';
-    }
-
-    /* Add path */
-    d_ptr->m_path += path;
+    curl_url_set(d_ptr->m_url, CURLUPART_PATH, path.c_str(), CURLU_URLENCODE);
 }
 
 /*!
  * \brief Use to know if URL is valid
  * \details
  * URL is considered valid if scheme is supported
- * and associated fields are set.
+ * and host is set.
  *
  * \return
  * Returns \c true if URL is valid
@@ -255,16 +320,13 @@ void Url::setPath(const std::string &path)
 bool Url::isValid() const
 {
     /* Verify scheme validity */
-    if(d_ptr->m_idScheme <= SCHEME_UNK || d_ptr->m_idScheme >= SCHEME_NB_SUPPORTED){
+    const IdScheme idScheme = getIdScheme();
+    if(idScheme <= SCHEME_UNK || idScheme >= SCHEME_NB_SUPPORTED){
         return false;
     }
 
     /* Verify fields validity */
-    if(d_ptr->m_host.empty() || d_ptr->m_path.empty()){
-        return false;
-    }
-
-    return true;
+    return !getHost().empty();
 }
 
 /*!
@@ -278,43 +340,29 @@ bool Url::isValid() const
  */
 std::string Url::toString() const
 {
-    /* Verify that URL is valid */
-    if(!isValid()){
-        return std::string();
-    }
-
-    /* Create URL */
-    std::string url = idSchemeToString(d_ptr->m_idScheme) + "://" + d_ptr->m_host;
-
-    /* Do we have port information ? */
-    if(d_ptr->m_port != 0){
-        url += ":" + std::to_string(d_ptr->m_port);
-    }
-
-    /* Add path information */
-    url += d_ptr->m_path;
-
-    return url;
+    return d_ptr->getPart(CURLUPART_URL, 0);
 }
 
 Url::IdScheme Url::getIdScheme() const
 {
-    return d_ptr->m_idScheme;
+    const std::string scheme = d_ptr->getPart(CURLUPART_SCHEME, 0);
+    return idSchemeFromString(scheme);
 }
 
-const std::string& Url::getHost() const
+const std::string Url::getHost() const
 {
-    return d_ptr->m_host;
+    return d_ptr->getPart(CURLUPART_HOST, 0);
 }
 
 uint16_t Url::getPort() const
 {
-    return d_ptr->m_port;
+    const std::string portStr = d_ptr->getPart(CURLUPART_PORT, 0);
+    return StringHelper::toInt(portStr, 10);
 }
 
-const std::string& Url::getPath() const
+const std::string Url::getPath() const
 {
-    return d_ptr->m_path;
+    return d_ptr->getPart(CURLUPART_PATH, CURLU_URLDECODE);
 }
 
 std::string Url::idSchemeToString(IdScheme idScheme)
@@ -347,30 +395,9 @@ Url::IdScheme Url::idSchemeFromString(const std::string &idScheme)
     return it->first;
 }
 
-Url& Url::operator=(const Url &other)
-{
-    /* Verify that value actually differs */
-    if(this == &other){
-        return *this;
-    }
-
-    /* Perform copy assignment */
-    d_ptr = std::make_unique<Impl>(*other.d_ptr);
-    return *this;
-}
-
-Url& Url::operator=(Url &&other) noexcept
-{
-    d_ptr = std::move(other.d_ptr);
-    return *this;
-}
-
 bool operator==(const Url &left, const Url &right)
 {
-    return left.d_ptr->m_idScheme == right.d_ptr->m_idScheme
-        && left.d_ptr->m_host == right.d_ptr->m_host
-        && left.d_ptr->m_port == right.d_ptr->m_port
-        && left.d_ptr->m_path == right.d_ptr->m_path;
+    return left.toString() == right.toString();
 }
 
 bool operator!=(const Url &left, const Url &right)
