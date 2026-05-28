@@ -51,8 +51,7 @@ INSTANTIATE_TEST_SUITE_P(
         DataUrlParse{.inputUrl = "https://example.com/path/to/resource", .expIsValid = true, .expIdScheme = Url::SCHEME_HTTPS, .expHost = "example.com", .expPort = 0, .expPath = "/path/to/resource", .expEncoded = "https://example.com/path/to/resource"},
         DataUrlParse{.inputUrl = "http://example.com/path/to/resource", .expIsValid = true, .expIdScheme = Url::SCHEME_HTTP, .expHost = "example.com", .expPort = 0, .expPath = "/path/to/resource", .expEncoded = "http://example.com/path/to/resource"},
         DataUrlParse{.inputUrl = "https://example.com", .expIsValid = true, .expIdScheme = Url::SCHEME_HTTPS, .expHost = "example.com", .expPort = 0, .expPath = "/", .expEncoded = "https://example.com/"},
-        DataUrlParse{.inputUrl = "https://example.com/my file.zip", .expIsValid = true, .expIdScheme = Url::SCHEME_HTTPS, .expHost = "example.com", .expPort = 0, .expPath = "/my file.zip", .expEncoded = "https://example.com/my%20file.zip"},
-        DataUrlParse{.inputUrl = "https://example.com/folder 2/my file éè.txt", .expIsValid = true, .expIdScheme = Url::SCHEME_HTTPS, .expHost = "example.com", .expPort = 0, .expPath = "/folder 2/my file éè.txt", .expEncoded = "https://example.com/folder%202/my%20file%20%C3%A9%C3%A8.txt"},
+        DataUrlParse{.inputUrl = "https://example.com/my file.zip", .expIsValid = false, .expIdScheme = Url::SCHEME_UNK, .expHost = "", .expPort = 0, .expPath = "", .expEncoded = ""},
         DataUrlParse{.inputUrl = "https://example.com/already%20encoded.txt", .expIsValid = true, .expIdScheme = Url::SCHEME_HTTPS, .expHost = "example.com", .expPort = 0, .expPath = "/already encoded.txt", .expEncoded = "https://example.com/already%20encoded.txt"},
         DataUrlParse{.inputUrl = "ftp://example.com:8080/path/to/resource.zip", .expIsValid = true, .expIdScheme = Url::SCHEME_FTP, .expHost = "example.com", .expPort = 8080, .expPath = "/path/to/resource.zip", .expEncoded = "ftp://example.com:8080/path/to/resource.zip"},
         DataUrlParse{.inputUrl = "ftps://example.com:8080/path/to/resource.zip", .expIsValid = true, .expIdScheme = Url::SCHEME_FTPS, .expHost = "example.com", .expPort = 8080, .expPath = "/path/to/resource.zip", .expEncoded = "ftps://example.com:8080/path/to/resource.zip"},
@@ -98,8 +97,10 @@ TEST_P(TestUrlCreate, createUrls)
 INSTANTIATE_TEST_SUITE_P(
     createUrls, TestUrlCreate, ::testing::Values(
         DataUrlCreate{.inputIdScheme = Url::SCHEME_HTTPS, .inputHost = "example.com", .inputPort = 8081, .inputPath = "/path/to/resource.zip", .expIsValid = true, .expStr = "https://example.com:8081/path/to/resource.zip"},
-        DataUrlCreate{.inputIdScheme = Url::SCHEME_FTP, .inputHost = "example.com", .inputPort = 0, .inputPath = "/path/to/resource.zip", .expIsValid = true, .expStr = "ftp://example.com/path/to/resource.zip"},
-
+        DataUrlCreate{.inputIdScheme = Url::SCHEME_FTP, .inputHost = "example.com", .inputPort = 0, .inputPath = "/path/to/resource.zip", .expIsValid = true, .expStr = "ftp://example.com/path/to/resource.zip"},                     
+        DataUrlCreate{.inputIdScheme = Url::SCHEME_FTP, .inputHost = "example.com", .inputPort = 0, .inputPath = "/my file.zip", .expIsValid = true, .expStr = "ftp://example.com/my%20file.zip"},
+        DataUrlCreate{.inputIdScheme = Url::SCHEME_FTP, .inputHost = "example.com", .inputPort = 41, .inputPath = "/folder 2/file éè.txt", .expIsValid = true, .expStr = "ftp://example.com:41/folder%202/file%20%C3%A9%C3%A8.txt"},
+        DataUrlCreate{.inputIdScheme = Url::SCHEME_FTP, .inputHost = "example.com", .inputPort = 0, .inputPath = "", .expIsValid = true, .expStr = "ftp://example.com/"},
         DataUrlCreate{.inputIdScheme = Url::SCHEME_HTTPS, .inputHost = "", .inputPort = 0, .inputPath = "", .expIsValid = false, .expStr = ""},
         DataUrlCreate{.inputIdScheme = Url::SCHEME_UNK, .inputHost = "example.com", .inputPort = 8081, .inputPath = "/path/to/resource.zip", .expIsValid = false, .expStr = ""}
     )

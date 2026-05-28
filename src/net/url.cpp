@@ -188,17 +188,15 @@ Url::Url() :
 }
 
 /*!
- * \brief Create an URL from a string which will
- * be parsed
- * \details
- * See setUrl() for more details.
+ * \brief Create an URL from an already encoded string
  *
  * \param[in] url
- * URL to parse. \n
+ * URL to set, it must be already properly encoded (use
+ * \c setPath() as alternative to encode an URL path). \n
  * If invalid or protocol unsupported, URL will be
  * cleared.
  *
- * \sa isValid(), setUrl()
+ * \sa isValid(), setPath()
  * \sa clear()
  */
 Url::Url(const std::string &url) :
@@ -314,7 +312,7 @@ void Url::setPath(const std::string &path)
  * \brief Use to know if URL is valid
  * \details
  * URL is considered valid if scheme is supported
- * and associated fields are set.
+ * and host is set.
  *
  * \return
  * Returns \c true if URL is valid
