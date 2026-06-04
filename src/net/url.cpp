@@ -50,7 +50,7 @@ public:
     void setUrl(CURLU *url);
     bool parseUrl(const std::string &url);
 
-    std::string getPart(CURLUPart idPart, uint flags) const;
+    std::string getPart(CURLUPart idPart, unsigned int flags) const;
 
 public:
     CURLU *m_url = nullptr;
@@ -155,7 +155,7 @@ bool Url::Impl::parseUrl(const std::string &url)
     return true;
 }
 
-std::string Url::Impl::getPart(CURLUPart idPart, uint flags) const
+std::string Url::Impl::getPart(CURLUPart idPart, unsigned int flags) const
 {
     /* Retrieve URL needed part */
     char *string = nullptr;
